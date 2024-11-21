@@ -6,7 +6,7 @@ import (
 )
 
 func Contents(content Node) Node {
-	return Section(Class("hero is-fullheight"),
+	return Section(Class("hero is-fullheight-with-navbar"),
 		Div(Class("hero-body"),
 			Div(Class("container"),
 				content)))
