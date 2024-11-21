@@ -1,7 +1,7 @@
 GO = go
 
 run:
-	$(GO) run main.go
+	$(GO) run *.go
 
 tidy:
 	$(GO) mod tidy

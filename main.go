@@ -5,21 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/demostanis/hypertube/pages"
 	"github.com/gorilla/mux"
-
-	. "maragu.dev/gomponents"
 
 	ghttp "maragu.dev/gomponents/http"
 )
-
-func HomeHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
-	return pages.Home(), nil
-}
-
-func LoginHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
-	return pages.Login(), nil
-}
 
 func main() {
 	r := mux.NewRouter()
