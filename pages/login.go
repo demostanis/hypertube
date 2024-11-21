@@ -12,5 +12,6 @@ func Login() Node {
 		components.Contents(
 			components.Login(),
 		),
+		components.Foot(),
 	)
 }
