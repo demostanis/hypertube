@@ -4,17 +4,24 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/gorilla/pat"
 
 	ghttp "maragu.dev/gomponents/http"
 )
 
-func main() {
-	r := mux.NewRouter()
+func APILoginHandler(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(2 * time.Second)
+	w.Write([]byte("hello"))
+}
 
-	r.HandleFunc("/", ghttp.Adapt(HomeHandler))
-	r.HandleFunc("/login", ghttp.Adapt(LoginHandler))
+func main() {
+	r := pat.New()
+
+	r.Get("/login", ghttp.Adapt(LoginHandler))
+	r.Post("/login", APILoginHandler)
+	r.Get("/", ghttp.Adapt(HomeHandler))
 
 	http.Handle("/", r)
 	port, ok := os.LookupEnv("port")
