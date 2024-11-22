@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/gorilla/pat v1.0.2
+	github.com/gorilla/schema v1.4.1
 	maragu.dev/gomponents v1.0.0
 )
 

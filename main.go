@@ -4,17 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gorilla/pat"
 
 	ghttp "maragu.dev/gomponents/http"
 )
-
-func APILoginHandler(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(2 * time.Second)
-	w.Write([]byte("hello"))
-}
 
 func main() {
 	r := pat.New()
