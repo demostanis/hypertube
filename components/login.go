@@ -16,14 +16,19 @@ func Center(content ...Node) Node {
 }
 
 func Login() Node {
-	return Center(
-		P(Class("title"), Text("Log in to Hypertube")),
-		Input(Class("input"),
-			Placeholder("Username...")),
-		Input(Class("input password"),
-			Placeholder("Password...")),
-		Button(Class("button"),
-			Text("Log in"),
+	return Form(Method("Post"), Action("/login"),
+		Center(
+			P(Class("title"), Text("Log in to Hypertube")),
+			Input(Class("input"),
+				Placeholder("Username..."),
+				Name("username")),
+			// TODO: there should be an eye icon inside this field
+			Input(Class("input password"),
+				Placeholder("Password..."),
+				Name("password")),
+			Button(Class("button"),
+				Text("Log in"),
+			),
 		),
 	)
 }
