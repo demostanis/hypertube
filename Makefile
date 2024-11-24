@@ -1,7 +1,7 @@
 GO = go
 
 run:
-	$(GO) run *.go
+	docker-compose up --build
 
 tidy:
 	$(GO) mod tidy
