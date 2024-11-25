@@ -11,5 +11,33 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./metrics/data/caddy_logs:/var/log/caddy
 
+  postgres:
+    image: postgres
+    env_file: .env
+    volumes:
+      - ./data:/var/lib/postgres/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  keycloak:
+    image: keycloak/keycloak
+    env_file: .env
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+
+      KC_HOSTNAME: keycloak.localhost
+      KC_HTTP_ENABLED: true
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    command: start
+    depends_on:
+      - postgres
+
 include:
   - ./metrics/docker-compose.yml
