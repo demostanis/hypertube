@@ -9,3 +9,15 @@ services:
       - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
+
+  grafana:
+    image: grafana/grafana-oss
+    volumes:
+      - ./metrics/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./metrics/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./metrics/grafana/dashboards:/var/lib/grafana/dashboards
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
