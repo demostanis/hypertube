@@ -9,7 +9,7 @@ services:
       - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ./data/caddy_logs:/var/log/caddy
+      - ./metrics/data/caddy_logs:/var/log/caddy
 
 include:
   - ./metrics/docker-compose.yml
