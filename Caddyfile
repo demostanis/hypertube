@@ -15,3 +15,7 @@ localhost:80 {
 grafana.localhost:80 {
 	reverse_proxy grafana:3000
 }
+
+keycloak.localhost:80 {
+	reverse_proxy keycloak:8080
+}
