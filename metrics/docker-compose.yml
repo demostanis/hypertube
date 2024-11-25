@@ -6,6 +6,7 @@ services:
       - ./metrics/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - ./metrics/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./metrics/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./metrics/grafana/grafana.ini:/etc/grafana/grafana.ini
     environment:
       # later, the authentication should be
       # handled by keycloak
