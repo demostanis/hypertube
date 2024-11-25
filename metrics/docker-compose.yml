@@ -1,0 +1,57 @@
+services:
+  # to display statistics and logs from prometheus and loki
+  grafana:
+    image: grafana/grafana-oss
+    volumes:
+      - ./metrics/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./metrics/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./metrics/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      # later, the authentication should be
+      # handled by keycloak
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    network:
+      - metrics
+
+  # to gather statistics (from e.g. caddy)
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+    network:
+      - metrics
+
+  # to send caddy logs (received from promtail) to grafana
+  loki:
+    image: grafana/loki
+    network:
+      - metrics
+
+  # to send caddy logs to loki
+  promtail:
+    image: grafana/promtail
+    volumes:
+      - ./data/caddy_logs:/var/log/caddy
+      - ./metrics/promtail.yml:/etc/promtail/config.yml
+    network:
+      - metrics
+
+  # to gather host system usage
+  node_exporter:
+    image: prom/node-exporter
+    command:
+      - --path.rootfs=/host
+      - --collector.systemd
+      - --collector.processes
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
+    environment:
+      - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/var/run/dbus/system_bus_socket
+    network:
+      - metrics
+
+networks:
+  # allows node-exporter to access host network usage
+  metrics:
+    type: bridge

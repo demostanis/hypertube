@@ -11,27 +11,5 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./data/caddy_logs:/var/log/caddy
 
-  grafana:
-    image: grafana/grafana-oss
-    volumes:
-      - ./metrics/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
-      - ./metrics/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-      - ./metrics/grafana/dashboards:/var/lib/grafana/dashboards
-    environment:
-      # later, the authentication should be
-      # handled by keycloak
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-
-  prometheus:
-    image: prom/prometheus
-    volumes:
-      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
-
-  loki:
-    image: grafana/loki
-
-  promtail:
-    image: grafana/promtail
-    volumes:
-      - ./data/caddy_logs:/var/log/caddy
-      - ./metrics/promtail.yml:/etc/promtail/config.yml
+include:
+  - ./metrics/docker-compose.yml
