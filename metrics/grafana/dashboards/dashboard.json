@@ -23,6 +23,43 @@
   "panels": [
     {
       "datasource": {
+        "uid": "de4z5dnhqisqof"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "11.3.1",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "expr": "{job=\"caddy_logs\"} | json | request_uri =~ `^/login.*` | line_format `{{.request_method}} {{.request_uri}}`",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Log filter example",
+      "type": "logs"
+    },
+    {
+      "datasource": {
         "type": "prometheus",
         "uid": "fe3yjkis7o6wwc"
       },
@@ -85,7 +122,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 8
       },
       "id": 1,
       "options": {
@@ -132,6 +169,6 @@
   "timezone": "",
   "title": "Caddy metrics",
   "uid": "ce4yqfxooxhq8a",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

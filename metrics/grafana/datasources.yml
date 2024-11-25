@@ -5,3 +5,8 @@ datasources:
     type: prometheus
     url: http://prometheus:9090
     uid: fe3yjkis7o6wwc
+
+  - name: loki
+    type: loki
+    url: http://loki:3100
+    uid: de4z5dnhqisqof

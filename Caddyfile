@@ -7,6 +7,9 @@
 
 localhost:80 {
 	reverse_proxy hypertube:8080
+	log {
+		output file /var/log/caddy/localhost.log
+	}
 }
 
 grafana.localhost:80 {
