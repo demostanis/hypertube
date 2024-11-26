@@ -39,5 +39,14 @@ services:
     depends_on:
       - postgres
 
+  redis:
+    image: redis
+
+  meilisearch:
+    image: getmeili/meilisearch
+
+  smtp:
+    image: rnwood/smtp4dev
+
 include:
   - ./metrics/docker-compose.yml
