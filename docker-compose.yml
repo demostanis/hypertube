@@ -1,6 +1,11 @@
 services:
   hypertube:
     build: .
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+          target: /app/
 
   caddy:
     image: caddy

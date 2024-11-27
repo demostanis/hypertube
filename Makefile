@@ -9,7 +9,7 @@ up:
 	$(COMPOSE) up
 
 build:
-	$(COMPOSE) up --build
+	$(COMPOSE) up --build --watch
 
 stop:
 	$(COMPOSE) down
