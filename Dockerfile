@@ -1,9 +1,10 @@
 FROM golang
 
-COPY . /app
 WORKDIR /app
 
-RUN go mod download && go mod verify
-RUN go build -v -o app *.go
+RUN \
+	--mount=type=cache,target=/go/pkg/mod \
+	--mount=type=bind,src=app,target=. \
+	go build -v -o /exe *.go
 
-CMD ["./app"]
+CMD ["/exe"]
