@@ -14,7 +14,7 @@ services:
       - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ./metrics/data/caddy_logs:/var/log/caddy
+      - caddy_logs:/var/log/caddy
 
   postgres:
     image: postgres

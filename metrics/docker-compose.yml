@@ -35,7 +35,7 @@ services:
   promtail:
     image: grafana/promtail
     volumes:
-      - ./data/caddy_logs:/var/log/caddy
+      - caddy_logs:/var/log/caddy
       - ./promtail.yml:/etc/promtail/config.yml
     networks:
       - metrics
@@ -61,3 +61,6 @@ networks:
   # allows node-exporter to access host network usage
   metrics:
     driver: bridge
+
+volumes:
+  caddy_logs:
