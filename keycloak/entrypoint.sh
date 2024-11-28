@@ -30,7 +30,9 @@ kcadm() {
 }
 
 kcadm create realms -s realm=default -s enabled=true
-kcadm create clients -s clientId='Hypertube login' \
+# TODO: find the URL and pass it to the golang app
+kcadm create clients -r default \
+	-s clientId='hypertube-auth' \
 	-s 'redirectUris=["http://localhost:8000"]' \
 	-s publicClient=false # Client authentication: on
 
