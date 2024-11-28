@@ -20,7 +20,7 @@ services:
     image: postgres
     env_file: .env
     volumes:
-      - ./data:/var/lib/postgres/data
+      - ./data:/var/lib/postgresql/data
       - ./db/init.sh:/docker-entrypoint-initdb.d/init.sh
     environment:
       POSTGRES_DB: hypertube
