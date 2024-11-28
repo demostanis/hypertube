@@ -1,6 +1,6 @@
 services:
   hypertube:
-    build: .
+    build: app
     develop:
       watch:
         - action: rebuild
@@ -21,8 +21,9 @@ services:
     env_file: .env
     volumes:
       - ./data:/var/lib/postgres/data
+      - ./db/init.sh:/docker-entrypoint-initdb.d/init.sh
     environment:
-      POSTGRES_DB: keycloak
+      POSTGRES_DB: hypertube
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
@@ -31,7 +32,7 @@ services:
     env_file: .env
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak_db
       KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
 
