@@ -28,7 +28,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   keycloak:
-    image: keycloak/keycloak
+    build: keycloak
     env_file: .env
     environment:
       KC_DB: postgres
