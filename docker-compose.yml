@@ -51,7 +51,7 @@ services:
   meilisearch:
     image: getmeili/meilisearch
 
-  smtp:
+  smtp4dev:
     image: rnwood/smtp4dev
 
 include:

@@ -19,3 +19,7 @@ grafana.localhost:80 {
 keycloak.localhost:80 {
 	reverse_proxy keycloak:8080
 }
+
+smtp4dev.localhost:80 {
+	reverse_proxy smtp4dev:80
+}
