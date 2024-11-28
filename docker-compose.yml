@@ -32,7 +32,7 @@ services:
     env_file: .env
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres/keycloak_db
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak
       KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
 
