@@ -2,7 +2,14 @@
 
 env_file=.env
 
-if ! grep -q POSTGRES_PASSWORD= "$env_file"; then
-	echo POSTGRES_PASSWORD="$(tr -dc '[:print:]' < /dev/urandom | \
-		head -c 32)" >> "$env_file"
-fi
+pwgen() {
+	pw=$(tr -dc '[:alnum:]' < /dev/urandom | head -c 32)
+
+	if ! grep -q "$1"_DB_PASSWORD= "$env_file"; then
+		echo "$1"_DB_PASSWORD="$pw" >> "$env_file"
+	fi
+}
+
+pwgen HYPERTUBE
+pwgen KEYCLOAK
+pwgen ROOT
