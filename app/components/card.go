@@ -7,6 +7,7 @@ import (
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 	"net/http"
+	"os"
 )
 
 type Movie struct {
@@ -28,7 +29,7 @@ func GetPopularMovies() string {
 	}
 
 	req.Header.Add("accept", "application/json")
-	req.Header.Add("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YWE4M2U4NzgwNTIzZmU2MDk2YjFlNTAwNGJmZDg0MyIsIm5iZiI6MTczMjc0NTAyNS41MTQxMTMyLCJzdWIiOiI2NzQ3OTY3MjY3OGExYmIzYmU0ZmVhNjIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.l_-eMD4uXqxVPT5HJOQCLhnVo-JkemGGCK3JKlz3Ync")
+	req.Header.Add("Authorization", "Bearer "+os.Getenv("MOVIE_DB_API"))
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -79,7 +80,6 @@ func CreateCardGrill() Node {
 	}
 	PopularMoviesDisplayed = PopularMoviesDisplayed + 7
 
-	fmt.Println(cards[0])
 	return Div(Class("fixed-grid has-7-cols mx-4"),
 		P(Class("mt-6")),
 		Div(append([]Node{Class("grid is-column-gap-4.5")}, cards[:]...)...),
