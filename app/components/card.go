@@ -10,19 +10,20 @@ import (
 	"os"
 )
 
+var CategoryIndex = 0
+
 type Movie struct {
 	PosterPath    string `json:"poster_path"`
 	OriginalTitle string `json:"original_title"`
+	OriginalName  string `json:"original_name"`
 }
 
 type ApiResponse struct {
 	Results []Movie `json:"results"`
 }
 
-func GetPopularMovies() string {
-	url := "https://api.themoviedb.org/3/movie/popular?language=fr&page=1"
-
-	req, err := http.NewRequest("GET", url, nil)
+func CallMvdbDefault(link string) string {
+	req, err := http.NewRequest("GET", link, nil)
 	if err != nil {
 		fmt.Println("Erreur lors de la création de la requête :", err)
 		return ""
@@ -55,71 +56,76 @@ func Card(name, poster string) Node {
 			),
 		),
 		Div(Class("card-content"),
+			Attr("style", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; color: white; font-weight: bold;"),
 			Text(name),
 		),
 	)
 }
 
-var PopularMoviesDisplayed = 0
-
-// func CreateCardGrill(FilmList ApiResponse) Node {
-// 	// Create an array large enough to hold all movies
-// cards := make([]Node, len(FilmList.Results))
-
-// // Fill the array with all movies
-// for i, movie := range FilmList.Results {
-// 	cards[i] = Div(Class("column"), Div(
-// 		Class("cell"),
-// 		Card(movie.OriginalTitle, movie.PosterPath),
-// 	),)
-// }
-
-// 	return Div(Class("category"),
-// 	Div(Class("control arrows"),
-// 		Button(Class("arrow-left"), Text("◀"),
-// 			Attr("onclick", "scrollGridLeft()"),
-// 		),
-// 		Button(Class("arrow-right"), Text("▶"),
-// 			Attr("onclick", "scrollGridRight()"),
-// 		),
-// 	),
-// 	Div(Class("columns is-mobile"),
-// 		Div(append([]Node{Class("grid is-column-gap-4.5"), Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;")}, cards[:]...)...),
-// 	),
-// 	Script(Src("/static/js/scroll.js")),
-// )
-// }
-
-func CreateCardGrill(FilmList ApiResponse) Node {
+func CreateCardGrill(FilmList ApiResponse, categoryId string) Node {
 	cards := make([]Node, len(FilmList.Results))
 
-	// Fill the array with all movies
 	for i, movie := range FilmList.Results {
-		cards[i] = Div(Class("column"), Div(
+		title := movie.OriginalTitle
+		if title == "" {
+			title = movie.OriginalName
+		}
+
+		cards[i] = Div(Class("column pl-0 pr-5"), Div(
 			Class("cell"),
-			Card(movie.OriginalTitle, movie.PosterPath),
+			Card(title, movie.PosterPath),
 		))
 	}
 
-	return Div(Class("category"),
+	return Div(Class("list"),
 		Div(Class("control arrows"),
-			Button(Class("arrow-left"), Text("◀"), Attr("onclick", "scrollGridLeft()")),
-			Button(Class("arrow-right"), Text("▶"), Attr("onclick", "scrollGridRight()")),
+			Button(Class("arrow-left"), Text("◀"),
+				Attr("onclick", fmt.Sprintf("scrollGridLeft('%s')", categoryId))),
+			Button(Class("arrow-right"), Text("▶"),
+				Attr("onclick", fmt.Sprintf("scrollGridRight('%s')", categoryId))),
 		),
 		Div(
-			append([]Node{Class("columns is-mobile"), Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;")}, cards[:]...)...,
+			append([]Node{
+				Class("columns is-mobile pl-5"),
+				ID(categoryId),
+				Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;"),
+			}, cards[:]...)...,
 		),
 		Script(Src("/static/js/scroll.js")),
 	)
 }
 
-func CardGrill() Node {
-	var PopularList ApiResponse
+func CreateCategory(MovieList ApiResponse, Name string) Node {
+	categoryId := fmt.Sprintf("category-grid-%d", CategoryIndex)
+	CategoryIndex = CategoryIndex + 1
+	return Div(
+		Class("category"),
+		Div(
+			Class("category-title title is-2 ml-5 mt-3"),
+			Text(Name),
+		),
+		CreateCardGrill(MovieList, categoryId),
+	)
+}
 
-	err := json.Unmarshal([]byte(GetPopularMovies()), &PopularList)
+func CardGrill() Node {
+	categories := []Node{}
+	var PopularMovies ApiResponse
+	var PopularSeries ApiResponse
+
+	err := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1")), &PopularMovies)
 	if err != nil {
 		fmt.Println("Erreur lors du parsing JSON :", err)
 		return Div(Text("Erreur lors de la récupération des films."))
 	}
-	return CreateCardGrill(PopularList)
+	err1 := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1")), &PopularSeries)
+	if err1 != nil {
+		fmt.Println("Erreur lors du parsing JSON :", err1)
+		return Div(Text("Erreur lors de la récupération des films."))
+	}
+
+	categories = append(categories, CreateCategory(PopularMovies, "Popular Movies"))
+	categories = append(categories, CreateCategory(PopularSeries, "Popular Series"))
+
+	return Div(append([]Node{Class("categories-container")}, categories...)...)
 }
