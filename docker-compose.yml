@@ -1,5 +1,6 @@
 services:
   hypertube:
+    env_file: .env
     build: .
     develop:
       watch:
