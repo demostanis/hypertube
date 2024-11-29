@@ -1,5 +1,7 @@
 FROM golang
 
+COPY app/static /app/static
+
 WORKDIR /app
 
 RUN \

@@ -16,6 +16,10 @@ func PageWithTitle(title string, content ...Node) Node {
 				Rel("stylesheet"),
 				Href(bulma),
 			),
+			Link(
+				Rel("stylesheet"),
+				Href("/static/css/styles.css"),
+			),
 		},
 		Body: content,
 	})
