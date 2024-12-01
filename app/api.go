@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/gorilla/schema"
 	ghttp "maragu.dev/gomponents/http"
@@ -43,13 +46,42 @@ type LoginParams struct {
 	Password string `json:"password"`
 }
 
+type Response struct {
+	AccessToken string `json:"access_token"`
+	Error       string `json:"error"`
+}
+
+// connect to a user in a realm
 func APILoginHandler(w http.ResponseWriter, r *http.Request) {
 	var params LoginParams
 
 	paramsInto(&params, w, r)
 
-	if params.Username == "admin" && params.Password == "admin" {
-		// do stuff I suppose
+	form := url.Values{}
+	form.Add("client_id", "hypertube-auth")
+	form.Add("username", params.Username)
+	form.Add("password", params.Password)
+	form.Add("grant_type", "password")
+
+	link := "http://keycloak:8080/realms/default/protocol/openid-connect/token"
+	res, err := http.PostForm(link, form)
+	if err != nil {
+		fmt.Printf("Error logging: %s\n", err.Error())
+		return
+	}
+	defer res.Body.Close()
+
+	var data Response
+	err = json.NewDecoder(res.Body).Decode(&data)
+	if err != nil {
+		fmt.Printf("Could not read error: %s", err.Error())
+		return
+	}
+
+	if data.Error != "" {
+		fmt.Printf("error: %s\n", data.Error)
+	} else {
+		fmt.Printf("access_token: %s\n", data.AccessToken)
 	}
 
 	ghttp.Adapt(LoginHandler)(w, r)
