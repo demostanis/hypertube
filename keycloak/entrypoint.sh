@@ -34,6 +34,7 @@ kcadm create realms -s realm=default -s enabled=true
 kcadm create clients -r default \
 	-s clientId='hypertube-auth' \
 	-s 'redirectUris=["http://localhost:8000"]' \
-	-s publicClient=false # Client authentication: on
+	-s publicClient=true \
+	-s directAccessGrantsEnabled=true 
 
 wait
