@@ -1,7 +1,6 @@
 .columns.is-mobile {
 	-ms-overflow-style: none;
 	scrollbar-width: none;
-	/* padding: 1rem; */
 }
 
 .columns.is-mobile::-webkit-scrollbar {
@@ -18,9 +17,11 @@
 	overflow: hidden;
 }
 
-/* .category-title {
-	margin-left: 50px !important;
-} */
+@media (max-width:1080px) and (max-height:1920px){
+	.control.arrows{
+				display:none;
+	}
+}
 
 .control.arrows {
 	position: absolute;
