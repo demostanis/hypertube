@@ -20,6 +20,7 @@ func PageWithTitle(title string, content ...Node) Node {
 				Rel("stylesheet"),
 				Href("/static/css/styles.css"),
 			),
+			Script(Src("https://unpkg.com/htmx.org@1.9.10")),
 		},
 		Body: content,
 	})
