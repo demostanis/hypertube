@@ -1,21 +1,47 @@
 package components
 
 import (
-	. "maragu.dev/gomponents"
-	. "maragu.dev/gomponents/html"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strconv"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 )
 
 var CategoryIndex = 0
 
+var ScrollLeftAttr = `event.preventDefault();
+		const container = document.getElementById('%s');
+		container.scrollLeft -= 1883;
+		
+		fetch('/handle-scroll-left?scrollLeft=' + container.scrollLeft)
+			.then(response => response.text())
+			.then(opacity => {
+				document.getElementById('%s-left').style.opacity = opacity;
+				document.getElementById('%s-right').style.opacity = 1;
+			});
+		return false;`
+
+var ScrollRightAttr = `event.preventDefault();
+		const container = document.getElementById('%s');
+		container.scrollLeft += 1883;
+		
+		fetch('/handle-scroll-right?scrollLeft=' + container.scrollLeft)
+			.then(response => response.text())
+			.then(opacity => {
+				document.getElementById('%s-left').style.opacity = 1;
+				document.getElementById('%s-right').style.opacity = opacity;
+			});
+		return false;`
+
 type Movie struct {
-	PosterPath		string `json:"poster_path"`
-	OriginalTitle	string `json:"title"`
-	OriginalName	string `json:"name"`
+	PosterPath    string `json:"poster_path"`
+	OriginalTitle string `json:"title"`
+	OriginalName  string `json:"name"`
 }
 
 type ApiResponse struct {
@@ -30,7 +56,7 @@ func CallMvdbDefault(link string) string {
 	}
 
 	req.Header.Add("accept", "application/json")
-	req.Header.Add("Authorization", "Bearer " + os.Getenv("MOVIE_DB_API"))
+	req.Header.Add("Authorization", "Bearer "+os.Getenv("MOVIE_DB_API"))
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -49,29 +75,29 @@ func CallMvdbDefault(link string) string {
 }
 
 func Card(name, poster string) Node {
-	return	Div(Class("card"),
-				Div(Class("card-image"),
-					Figure(Class("image is-4by5"),
-						Img(Src("https://image.tmdb.org/t/p/w500/" + poster)),
-					),
-				),
-				Div(Class("card-content"),
-					Attr("style", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; color: white; font-weight: bold;"),
-					Text(name),
-				),
-			)
+	return Div(Class("card"),
+		Div(Class("card-image"),
+			Figure(Class("image is-4by5"),
+				Img(Src("https://image.tmdb.org/t/p/w500/"+poster)),
+			),
+		),
+		Div(Class("card-content"),
+			Attr("style", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; color: white; font-weight: bold;"),
+			Text(name),
+		),
+	)
 }
 
 func CreateCardGrill(FilmList ApiResponse, categoryId string) Node {
 	cards := make([]Node, len(FilmList.Results))
-	
+
 	for i, movie := range FilmList.Results {
 		title := movie.OriginalTitle
 		if title == "" {
 			title = movie.OriginalName
 		}
-	
-		cards[i] = Div(Class("column pl-0 pr-5"), Div(
+
+		cards[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)), Div(
 			Class("cell"),
 			Card(title, movie.PosterPath),
 		))
@@ -79,19 +105,26 @@ func CreateCardGrill(FilmList ApiResponse, categoryId string) Node {
 
 	return Div(Class("list"),
 		Div(Class("control arrows"),
-			Button(Class("arrow-left"), Text("◀"), 
-				Attr("onclick", fmt.Sprintf("scrollGridLeft('%s')", categoryId))),
-			Button(Class("arrow-right"), Text("▶"), 
-				Attr("onclick", fmt.Sprintf("scrollGridRight('%s')", categoryId))),
+			Button(
+				Class("arrow-left"),
+				ID(fmt.Sprintf("%s-left", categoryId)),
+				Attr("onclick", fmt.Sprintf(ScrollLeftAttr, categoryId, categoryId, categoryId)),
+				Text("◀"),
+			),
+			Button(
+				Class("arrow-right"),
+				ID(fmt.Sprintf("%s-right", categoryId)),
+				Attr("onclick", fmt.Sprintf(ScrollRightAttr, categoryId, categoryId, categoryId)),
+				Text("▶"),
+			),
 		),
 		Div(
 			append([]Node{
-				Class("columns is-mobile pl-5"), 
+				Class("columns is-mobile pl-5"),
 				ID(categoryId),
-				Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;"),
+				Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;scroll-behavior: smooth;position: relative;"),
 			}, cards[:]...)...,
 		),
-		Script(Src("/static/js/scroll.js")),
 	)
 }
 
