@@ -5,7 +5,7 @@
 	admin :2019
 }
 
-localhost:80 {
+:80 {
 	reverse_proxy hypertube:8080
 	log {
 		output file /var/log/caddy/localhost.log
