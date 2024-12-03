@@ -1,3 +1,4 @@
+//go:nofmt
 package main
 
 import (
@@ -15,6 +16,8 @@ import (
 func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.HandleFunc("/handle-scroll-left", handleScrollLeft)
+	http.HandleFunc("/handle-scroll-right", handleScrollRight)
 
 	r := pat.New()
 

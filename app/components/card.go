@@ -8,9 +8,37 @@ import (
 	. "maragu.dev/gomponents/html"
 	"net/http"
 	"os"
+	"strconv"
+
+	. "maragu.dev/gomponents"
+	. "maragu.dev/gomponents/html"
 )
 
 var CategoryIndex = 0
+
+var ScrollLeftAttr = `event.preventDefault();
+		const container = document.getElementById('%s');
+		container.scrollLeft -= 1883;
+		
+		fetch('/handle-scroll-left?scrollLeft=' + container.scrollLeft)
+			.then(response => response.text())
+			.then(opacity => {
+				document.getElementById('%s-left').style.opacity = opacity;
+				document.getElementById('%s-right').style.opacity = 1;
+			});
+		return false;`
+
+var ScrollRightAttr = `event.preventDefault();
+		const container = document.getElementById('%s');
+		container.scrollLeft += 1883;
+		
+		fetch('/handle-scroll-right?scrollLeft=' + container.scrollLeft)
+			.then(response => response.text())
+			.then(opacity => {
+				document.getElementById('%s-left').style.opacity = 1;
+				document.getElementById('%s-right').style.opacity = opacity;
+			});
+		return false;`
 
 type Movie struct {
 	PosterPath    string `json:"poster_path"`
@@ -71,7 +99,7 @@ func CreateCardGrill(FilmList ApiResponse, categoryId string) Node {
 			title = movie.OriginalName
 		}
 
-		cards[i] = Div(Class("column pl-0 pr-5"), Div(
+		cards[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)), Div(
 			Class("cell"),
 			Card(title, movie.PosterPath),
 		))
@@ -79,19 +107,26 @@ func CreateCardGrill(FilmList ApiResponse, categoryId string) Node {
 
 	return Div(Class("list"),
 		Div(Class("control arrows"),
-			Button(Class("arrow-left"), Text("◀"),
-				Attr("onclick", fmt.Sprintf("scrollGridLeft('%s')", categoryId))),
-			Button(Class("arrow-right"), Text("▶"),
-				Attr("onclick", fmt.Sprintf("scrollGridRight('%s')", categoryId))),
+			Button(
+				Class("arrow-left"),
+				ID(fmt.Sprintf("%s-left", categoryId)),
+				Attr("onclick", fmt.Sprintf(ScrollLeftAttr, categoryId, categoryId, categoryId)),
+				Text("◀"),
+			),
+			Button(
+				Class("arrow-right"),
+				ID(fmt.Sprintf("%s-right", categoryId)),
+				Attr("onclick", fmt.Sprintf(ScrollRightAttr, categoryId, categoryId, categoryId)),
+				Text("▶"),
+			),
 		),
 		Div(
 			append([]Node{
 				Class("columns is-mobile pl-5"),
 				ID(categoryId),
-				Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;"),
+				Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;scroll-behavior: smooth;position: relative;"),
 			}, cards[:]...)...,
 		),
-		Script(Src("/static/js/scroll.js")),
 	)
 }
 
