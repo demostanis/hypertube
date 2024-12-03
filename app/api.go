@@ -1,10 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
-	"io/ioutil"
 
 	"github.com/gorilla/schema"
 	ghttp "maragu.dev/gomponents/http"
@@ -46,8 +46,12 @@ type LoginParams struct {
 	Password string `json:"password"`
 }
 
+type Response struct {
+	AccessToken string `json:"access_token"`
+	Error       string `json:"error"`
+}
+
 // connect to a user in a realm
-// todo : get authorization with http://keycloak.localhost:8000/realms/default/protocol/openid-connect/auth
 func APILoginHandler(w http.ResponseWriter, r *http.Request) {
 	var params LoginParams
 
@@ -65,16 +69,20 @@ func APILoginHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Error logging: %s\n", err.Error())
 		return
 	}
-
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)	
 
+	var data Response
+	err = json.NewDecoder(res.Body).Decode(&data)
 	if err != nil {
 		fmt.Printf("Could not read error: %s", err.Error())
 		return
 	}
-	
-	fmt.Println(string(body))
+
+	if data.Error != "" {
+		fmt.Printf("error: %s\n", data.Error)
+	} else {
+		fmt.Printf("access_token: %s\n", data.AccessToken)
+	}
 
 	ghttp.Adapt(LoginHandler)(w, r)
 }
