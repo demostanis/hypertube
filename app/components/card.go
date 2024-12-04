@@ -38,10 +38,11 @@ var ScrollRightAttr = `event.preventDefault();
 		return false;`
 
 type Movie struct {
-	PosterPath    string `json:"poster_path"`
-	OriginalTitle string `json:"title"`
-	OriginalName  string `json:"name"`
-	Overview      string `json:"overview"`
+	ImagePath  string `json:"backdrop_path"`
+	PosterPath string `json:"poster_path"`
+	Title      string `json:"title"`
+	Name       string `json:"name"`
+	Overview   string `json:"overview"`
 }
 
 type ApiResponse struct {
@@ -78,13 +79,18 @@ func Card(name, poster, overview string) Node {
 	return Div(Class("card"),
 		Attr("data-title", name),
 		Attr("data-overview", overview),
-		Div(Class("card-image"),
+		Div(Class("card-image is-hidden-mobile"),
 			Figure(Class("image is-4by5"),
 				Img(Class("poster-file"), Src("https://image.tmdb.org/t/p/w500/"+poster)),
 			),
 		),
-		Div(Class("card-content"),
-			Attr("style", "white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; color: white; font-weight: bold;"),
+		Div(Class("card-image is-hidden-tablet"),
+			Figure(Class("image is-4by5"),
+				Img(Class("poster-file"), Attr("style", "height: 121%;"), Src("https://image.tmdb.org/t/p/w500/"+poster)),
+			),
+		),
+		Div(Class("card-content is-hidden-mobile"),
+			Attr("style", "white-space: nowrap; overflow-x: auto; text-overflow: ellipsis; text-align: center; color: white; font-weight: bold;padding: 2.522vh"),
 			Text(name),
 		),
 	)
@@ -94,19 +100,22 @@ func CreateCardGrill(FilmList ApiResponse, categoryId string) Node {
 	cards := make([]Node, len(FilmList.Results))
 
 	for i, movie := range FilmList.Results {
-		title := movie.OriginalTitle
+		title := movie.Title
 		if title == "" {
-			title = movie.OriginalName
+			title = movie.Name
 		}
 
-		cards[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)), Div(
-			Class("cell"),
-			Card(title, movie.PosterPath, movie.Overview),
-		))
+		cards[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)),
+			Attr("style", "display: flex;"),
+			Div(
+				Class("cell"),
+				Card(title, movie.PosterPath, movie.Overview),
+			),
+		)
 	}
 
 	return Div(Class("list"),
-		Div(Class("control arrows"),
+		Div(Class("control arrows is-hidden-mobile"),
 			Button(
 				Class("arrow-left"),
 				ID(fmt.Sprintf("%s-left", categoryId)),
@@ -137,28 +146,59 @@ func CreateCategory(MovieList ApiResponse, Name string) Node {
 		Class("category"),
 		Div(
 			Class("category-title title is-2 ml-5 mt-3"),
+			Attr("style", "position: relative;"),
 			Text(Name),
 		),
 		CreateCardGrill(MovieList, categoryId),
 	)
 }
 
+func HeadLine(film Movie) Node {
+	Name := film.Title
+	if Name == "" {
+		Name = film.Name
+	}
+	return Div(Class("headline"),
+		Attr("style", "height: 41vw;position: relative;"),
+		Div(Class("headline-gradient-left")),
+		Div(Class("headline-content"),
+			Div(Class("headline-tilte"), Text(Name)),
+			Div(Class("headline-overview"), Text(film.Overview)),
+			Button(Class("button"), ID("play-button"),
+				Span(Attr("style", "color: mediumslateblue;"), Text("PLAY")),
+				Span(Class("icon"), Attr("style", "color: mediumslateblue;"),
+					I(Class("fa-solid fa-play"), Attr("aria-hidden", "true")),
+				),
+			),
+		),
+		Div(Class("headline-gradient")),
+		Img(Class("headline-img"), Src("https://image.tmdb.org/t/p/original"+film.ImagePath)),
+	)
+}
+
 func CardGrill() Node {
 	categories := []Node{}
+	var TopRatedMovies ApiResponse
 	var PopularMovies ApiResponse
 	var PopularSeries ApiResponse
 
-	err := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1&region=fr-FR")), &PopularMovies)
-	if err != nil {
-		fmt.Println("Erreur lors du parsing JSON :", err)
+	err0 := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/movie/top_rated?language=fr-FR&page=1")), &TopRatedMovies)
+	if err0 != nil {
+		fmt.Println("Erreur lors du parsing JSON :", err0)
 		return Div(Text("Erreur lors de la récupération des films."))
 	}
-	err1 := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1&region=fr-FR")), &PopularSeries)
+	err1 := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1&region=fr-FR")), &PopularMovies)
 	if err1 != nil {
 		fmt.Println("Erreur lors du parsing JSON :", err1)
 		return Div(Text("Erreur lors de la récupération des films."))
 	}
+	err2 := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1&region=fr-FR")), &PopularSeries)
+	if err2 != nil {
+		fmt.Println("Erreur lors du parsing JSON :", err2)
+		return Div(Text("Erreur lors de la récupération des films."))
+	}
 
+	categories = append(categories, HeadLine(TopRatedMovies.Results[0]))
 	categories = append(categories, CreateCategory(PopularMovies, "Popular Movies"))
 	categories = append(categories, CreateCategory(PopularSeries, "Popular Series"))
 

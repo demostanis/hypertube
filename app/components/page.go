@@ -21,6 +21,7 @@ func PageWithTitle(title string, content ...Node) Node {
 				Href("/static/css/styles.css"),
 			),
 			Script(Src("https://unpkg.com/htmx.org@1.9.10")),
+			Script(Src("https://kit.fontawesome.com/d837619f0f.js"), Attr("crossorigin", "anonymous")),
 		},
 		Body: content,
 	})
