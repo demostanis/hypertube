@@ -44,13 +44,11 @@ services:
   # to gather host system usage
   node_exporter:
     image: prom/node-exporter
-    command:
-      - --path.rootfs=/host
-      - --collector.systemd
-      - --collector.processes
+    entrypoint: ["/bin/entrypoint.sh"]
     pid: host
     volumes:
       - /:/host:ro,rslave
+      - ./node_exporter.sh:/bin/entrypoint.sh
     environment:
       - DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/var/run/dbus/system_bus_socket
     networks:
