@@ -1,0 +1,8 @@
+services:
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    volumes:
+      - ./data:/config
+      - ./blackhole:/downloads
+      - ./setup_jackett.sh:/setup_jackett
+    command: /setup_jackett

@@ -23,3 +23,7 @@ keycloak.localhost:80 {
 smtp4dev.localhost:80 {
 	reverse_proxy smtp4dev:80
 }
+
+jackett.localhost:80 {
+	reverse_proxy jackett:9117
+}
