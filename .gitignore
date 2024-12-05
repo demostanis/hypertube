@@ -1,3 +1,4 @@
 data/
+jackett/blackhole
 conf.mk
 .env

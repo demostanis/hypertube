@@ -58,3 +58,4 @@ services:
 
 include:
   - ./metrics/docker-compose.yml
+  - ./jackett/docker-compose.yml
