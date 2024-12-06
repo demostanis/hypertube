@@ -14,3 +14,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
 func LoginHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
 	return pages.Login(), nil
 }
+
+func SigninHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
+	return pages.Signin(), nil
+}

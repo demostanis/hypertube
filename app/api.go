@@ -86,3 +86,7 @@ func APILoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	ghttp.Adapt(LoginHandler)(w, r)
 }
+
+func APISigninHandler(w http.ResponseWriter, r *http.Request) {
+	ghttp.Adapt(SigninHandler)(w, r)
+}
