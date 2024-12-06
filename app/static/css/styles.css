@@ -1,3 +1,59 @@
+.navbar-item:hover {
+	background-color: rgba(20, 22, 26, 1);
+}
+
+@media screen and (max-width: 1024px) {
+	.navbar-menu {
+		align-items: stretch;
+		background-color: #1f2226;
+		/* box-shadow: $navbar-box-shadow; */
+		font-size: 0.875rem;
+		display: flex;
+		flex-grow: 1;
+		flex-shrink: 0;
+		padding: 0;
+
+		.navbar-item.is-active .navbar-dropdown,
+		.navbar-item.is-hoverable:focus .navbar-dropdown,
+		.navbar-item.is-hoverable:focus-within .navbar-dropdown,
+		.navbar-item.is-hoverable:hover .navbar-dropdown {
+		display: block;
+		}
+
+		.navbar-start, .navbar-end {
+			justify-content: flex-end;
+			margin-left: auto;
+			align-items: stretch;
+			display: flex;
+
+			.navbar-item.has-dropdown {
+				align-items: stretch;
+			}
+
+			.navbar-item,
+			.navbar-link {
+				align-items: center;
+				display: flex;
+			}
+
+			.navbar-dropdown {
+				background-color: #fff;
+				border-bottom-left-radius: 6px;
+				border-bottom-right-radius: 6px;
+				border-top: 2px solid #dbdbdb;
+				box-shadow: 0 8px 8px rgba(10, 10, 10, 0.1);
+				display: none;
+				font-size: 0.875rem;
+				left: 0;
+				min-width: 100%;
+				position: absolute;
+				top: 100%;
+				z-index: 20;
+			}
+		}
+	}
+}
+
 .columns.is-mobile {
 	-ms-overflow-style: none;
 	scrollbar-width: none;
@@ -98,7 +154,7 @@
 	position: relative;
 }
 
-.card::before {
+/* .card::before {
 	content: attr(data-title);
 
 	position: absolute;
@@ -144,10 +200,10 @@
 	overflow: hidden;
 	text-align: center;
 	font-size: 13px;
-}
+} */
 
-.card:hover .card-content {
-	display: none;
+.cell:hover .card {
+	top: 5px;
 }
 
 .card .card-image .image.is-4by5 .poster-file{
@@ -156,17 +212,12 @@
 	transition: transform 0.1s ease;
 }
 
-.card:hover .card-image .image.is-4by5 .poster-file{
-	height: 121%; /* That was the better percentage */
-	border-radius: 2px; /* 0px cause a graphic bug */
-	transform: scale(1.1);
-	object-fit: cover;
-}
-
-.card:hover::before,
-.card:hover::after {
-	display: block;
-}
+/* .card:hover .card-image .image.is-4by5 .poster-file{ */
+	/* height: 121%; That was the better percentage */
+	/* border-radius: 2px; 0px cause a graphic bug */
+	/* transform: scale(1.1); */
+	/* object-fit: cover; */
+/* } */
 
 .cell {
 	flex: 0 0 auto !important;
