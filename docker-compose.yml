@@ -1,6 +1,7 @@
 services:
   hypertube:
     build: app
+    env_file: .env
     develop:
       watch:
         - action: rebuild
