@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/demostanis/hypertube/api"
+	"github.com/demostanis/hypertube/pages"
 	"github.com/gorilla/pat"
 
 	ghttp "maragu.dev/gomponents/http"
@@ -13,11 +15,11 @@ import (
 func main() {
 	r := pat.New()
 
-	r.Get("/login", ghttp.Adapt(LoginHandler))
-	r.Post("/login", APILoginHandler)
-	r.Get("/signin", ghttp.Adapt(SigninHandler))
-	r.Post("/signin", APISigninHandler)
-	r.Get("/", ghttp.Adapt(HomeHandler))
+	r.Get("/login", ghttp.Adapt(pages.LoginHandler))
+	r.Post("/login", api.APILoginHandler)
+	r.Get("/signin", ghttp.Adapt(pages.SigninHandler))
+	r.Post("/signin", api.APISigninHandler)
+	r.Get("/", ghttp.Adapt(pages.HomeHandler))
 
 	http.Handle("/", r)
 	port, ok := os.LookupEnv("port")
