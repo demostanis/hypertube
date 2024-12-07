@@ -18,6 +18,7 @@ func Navbar() Node {
 			),
 			Div(Class("navbar-end"),
 				navbarItem("Login", "/login"),
+				navbarItem("Signin", "/signin"),
 			),
 		),
 	)
