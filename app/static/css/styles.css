@@ -150,78 +150,24 @@
 	pointer-events: none;
 }
 
-.card {
+.cell .card {
 	position: relative;
-}
-
-/* .card::before {
-	content: attr(data-title);
-
-	position: absolute;
 	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	transform: scale(1.1);
-	padding: 10px;
-	margin-bottom: 10px;
-
-	background: rgba(0, 0, 0, 0.8);
-	color: white;
-	display: none;
-	box-sizing: border-box;
-	z-index: 10;
-	
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-weight: bold;
-	text-align: center;
-	font-size: clamp(8px, 24px, 24px);
+	transition: top 0.2s ease;
 }
-
-.card::after {
-	content: attr(data-overview);
-
-	position: absolute;
-	top: 50px;
-	left: 0;
-	width: 100%;
-	height: calc(99% - 50px);
-	transform: scale(1.1);
-	padding: 10px;
-
-	background:  transparent;
-	color: white;
-	display: none;
-	box-sizing: border-box;
-	z-index: 10;
-
-	overflow: hidden;
-	text-align: center;
-	font-size: 13px;
-} */
 
 .cell:hover .card {
-	top: 5px;
+	top: -12px;
 }
 
-.card .card-image .image.is-4by5 .poster-file{
+.card .card-image .image.is-4by5 .poster-file {
 	position: relative;
-	z-index: 1;
-	transition: transform 0.1s ease;
 }
-
-/* .card:hover .card-image .image.is-4by5 .poster-file{ */
-	/* height: 121%; That was the better percentage */
-	/* border-radius: 2px; 0px cause a graphic bug */
-	/* transform: scale(1.1); */
-	/* object-fit: cover; */
-/* } */
 
 .cell {
 	flex: 0 0 auto !important;
 	width: 250px !important;
+	margin-bottom: 8px;
 }
 
 .list {
@@ -235,7 +181,6 @@
 	width: 100%;
 	height: 100%;
 	pointer-events: none;
-	z-index: 11;
 }
 
 .arrow-left {
@@ -244,14 +189,14 @@
 
 .arrow-left, .arrow-right {
 	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
+	top: 12px;
 	color: white;
 	width: 57px;
-	height: 385px;
+	height: 380px;
 	cursor: pointer;
 	pointer-events: auto;
 	transition: opacity 0.3s ease;
+	z-index: 1;
 }
 
 .arrow-left {
