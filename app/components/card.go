@@ -18,21 +18,29 @@ var CategoryIndex = 0
 
 var ScrollLeftAttr = `event.preventDefault();
 		const container = document.getElementById('%s');
+		const RightArrow = document.getElementById('%s-right');
+		const LeftArrow = document.getElementById('%s-left');
 
 		const opacity = (container.scrollLeft - container.offsetWidth <= 0) ? 0 : 1;
-		document.getElementById('%s-left').style.opacity = opacity;
-		document.getElementById('%s-right').style.opacity = 1;
+		LeftArrow.style.zIndex = opacity;
+		RightArrow.style.zIndex = 1;
+		LeftArrow.style.opacity = opacity;
+		RightArrow.style.opacity = 1;
 		
 		container.scrollLeft -= container.offsetWidth;
 		return false;`
 
 var ScrollRightAttr = `event.preventDefault();
 		const container = document.getElementById('%s');
+		const RightArrow = document.getElementById('%s-right');
+		const LeftArrow = document.getElementById('%s-left');
 		const maxScrollLeft = container.scrollWidth - container.clientWidth;
 		
 		const opacity = (container.scrollLeft + container.offsetWidth >= maxScrollLeft) ? 0 : 1;
-		document.getElementById('%s-left').style.opacity = 1;
-		document.getElementById('%s-right').style.opacity = opacity;
+		RightArrow.style.zIndex = opacity;
+		LeftArrow.style.zIndex = 1;
+		RightArrow.style.opacity = opacity;
+		LeftArrow.style.opacity = 1;
 		
 		container.scrollLeft += container.offsetWidth;
 		return false;`
