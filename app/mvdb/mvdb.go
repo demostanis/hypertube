@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-type Film struct {
+type Content struct {
 	ImagePath  string `json:"backdrop_path"`
 	PosterPath string `json:"poster_path"`
 	Title      string `json:"title"`
@@ -24,7 +24,7 @@ type Film struct {
 }
 
 type ApiResponse struct {
-	Results []Film `json:"results"`
+	Results []Content `json:"results"`
 }
 
 func CallMvdbDefault(link string) []byte {
@@ -53,10 +53,10 @@ func CallMvdbDefault(link string) []byte {
 	return []byte(body)
 }
 
-func SearchTrailer(FilmID, Lang string) string {
+func SearchTrailer(ContentID, Lang string) string {
 	var Trailers ApiResponse
 
-	response := CallMvdbDefault("https://api.themoviedb.org/3/movie/" + FilmID + "/videos" + Lang)
+	response := CallMvdbDefault("https://api.themoviedb.org/3/movie/" + ContentID + "/videos" + Lang)
 
 	json.Unmarshal(response, &Trailers)
 
@@ -71,10 +71,10 @@ func SearchTrailer(FilmID, Lang string) string {
 	return ""
 }
 
-func FindTrailer(FilmID string) string {
-	TrailerLink := SearchTrailer(FilmID, "?language=fr-FR")
+func FindTrailer(ContentID string) string {
+	TrailerLink := SearchTrailer(ContentID, "?language=fr-FR")
 	if TrailerLink == "" {
-		return SearchTrailer(FilmID, "")
+		return SearchTrailer(ContentID, "")
 	}
 	return TrailerLink
 }
