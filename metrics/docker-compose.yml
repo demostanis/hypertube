@@ -1,7 +1,7 @@
 services:
   # to display statistics and logs from prometheus and loki
   grafana:
-    image: grafana/grafana-oss
+    image: grafana/grafana-oss:11.4.0
     volumes:
       - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
@@ -17,7 +17,7 @@ services:
 
   # to gather statistics (from e.g. caddy)
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v3.0.0
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
@@ -26,14 +26,14 @@ services:
 
   # to send caddy logs (received from promtail) to grafana
   loki:
-    image: grafana/loki
+    image: grafana/loki:3.2.2
     networks:
       - metrics
       - default
 
   # to send caddy logs to loki
   promtail:
-    image: grafana/promtail
+    image: grafana/promtail:3.2.2
     volumes:
       - caddy_logs:/var/log/caddy
       - ./promtail.yml:/etc/promtail/config.yml
@@ -43,7 +43,7 @@ services:
 
   # to gather host system usage
   node_exporter:
-    image: prom/node-exporter
+    image: prom/node-exporter:v1.6.0
     entrypoint: ["/bin/entrypoint.sh"]
     pid: host
     volumes:

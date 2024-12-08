@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:1.23.4
 
 WORKDIR /app
 

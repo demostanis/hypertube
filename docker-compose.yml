@@ -9,7 +9,7 @@ services:
           target: /app/
 
   caddy:
-    image: caddy
+    image: caddy:2.9
     ports:
       - "8000:80"
       - "8443:443"
@@ -18,7 +18,7 @@ services:
       - caddy_logs:/var/log/caddy
 
   postgres:
-    image: postgres
+    image: postgres:17.2
     env_file: .env
     volumes:
       - ./data:/var/lib/postgresql/data
