@@ -42,7 +42,7 @@ func Navbar() Node {
 			),
 			Div(Class("navbar-end"),
 				Attr("style", "margin-right: 68px"),
-				navbarItemEnd("Resheach...", "/", "magnifying-glass"),
+				navbarItemEnd("Research...", "/", "magnifying-glass"),
 				navbarItemEnd("Login", "/login", "user"),
 			),
 		),
