@@ -8,5 +8,5 @@ import (
 )
 
 func Home() Node {
-	return components.Page(Class("has-navbar-fixed-top"), components.Navbar(), components.CardGrill(), components.Foot())
+	return components.Page(Class("has-navbar-fixed-top"), components.Navbar(), components.HeadLine(), components.CardGrill(), components.Foot())
 }
