@@ -13,7 +13,7 @@ func handleEmpty(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func handleShowFilmCard(w http.ResponseWriter, r *http.Request) {
+func handleShowFilmPopup(w http.ResponseWriter, r *http.Request) {
 	FilmId := r.URL.Query().Get("filmId")
 	FilmTitle := r.URL.Query().Get("titlefilm")
 	FilmOverview := r.URL.Query().Get("overview")
