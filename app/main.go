@@ -17,7 +17,7 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/empty", handleEmpty)
-	http.HandleFunc("/show-film-card", handleShowFilmCard)
+	http.HandleFunc("/show-film-popup", handleShowFilmPopup)
 
 	r := pat.New()
 

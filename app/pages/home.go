@@ -8,5 +8,12 @@ import (
 )
 
 func Home() Node {
-	return components.Page(Class("has-navbar-fixed-top"), components.Navbar(), components.HeadLine(), components.CardGrill(), components.Foot())
+	return components.Page(
+		Class("has-navbar-fixed-top"),
+		components.Navbar(),
+		components.HeadLine("https://api.themoviedb.org/3/movie/top_rated?language=fr-FR&page=1"),
+		components.FilmCategory("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1&region=fr-FR", "Popular Movies"),
+		components.FilmCategory("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1&region=fr-FR", "Popular Series"),
+		Div(ID("film-popup")),
+		components.Foot())
 }

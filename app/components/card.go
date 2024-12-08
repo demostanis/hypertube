@@ -45,7 +45,11 @@ func Card(poster string) Node {
 	return Div(Class("card"),
 		Div(Class("card-image"),
 			Figure(Class("image is-4by5"),
-				Img(Class("poster-file"), Attr("style", "height: 121%;"), Src("https://image.tmdb.org/t/p/w500/"+poster)),
+				Img(
+					Class("poster-file"),
+					Attr("style", "height: 121%;"),
+					Src("https://image.tmdb.org/t/p/w500/"+poster),
+				),
 			),
 		),
 	)
@@ -73,33 +77,41 @@ func ScrollArrows(categoryId string) Node {
 }
 
 func CreateCards(FilmList mvdb.ApiResponse, categoryId string) []Node {
-	cards := make([]Node, len(FilmList.Results))
+	CardArray := make([]Node, len(FilmList.Results))
 
-	for i, movie := range FilmList.Results {
-		title := movie.Title
-		title := movie.Title
-		if title == "" {
-			title = movie.Name
+	for i, film := range FilmList.Results {
+		Title := film.Title
+		if Title == "" {
+			Title = film.Name
 		}
 
-		cards[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)),
+		CardArray[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)),
 			Attr("style", "display: flex;"),
 			Div(
 				Class("cell is-clickable"),
-				Attr("hx-get", "/show-film-card"),
+				Attr("hx-get", "/show-film-popup"),
 				Attr("hx-trigger", "click"),
-				Attr("hx-target", "#film-card"),
+				Attr("hx-target", "#film-popup"),
 				Attr("hx-swap", "innerHTML"),
-				Attr("hx-vals", fmt.Sprintf(`{"filmId": %d, "titlefilm": "%s", "overview": "%s", "image": "%s"}`, movie.Id, title, movie.Overview, movie.ImagePath)),
-				Card(movie.PosterPath),
+				Attr(
+					"hx-vals",
+					fmt.Sprintf(
+						`{"filmId": %d, "titlefilm": "%s", "overview": "%s", "image": "%s"}`,
+						film.Id,
+						Title,
+						film.Overview,
+						film.ImagePath,
+					),
+				),
+				Card(film.PosterPath),
 			),
 		)
 	}
-	return cards
+	return CardArray
 }
 
 func CreateCardGrill(FilmList mvdb.ApiResponse, categoryId string) Node {
-	cards := CreateCards(FilmList, categoryId)
+	CardArray := CreateCards(FilmList, categoryId)
 
 	return Div(Class("list"),
 		ScrollArrows(categoryId),
@@ -107,13 +119,20 @@ func CreateCardGrill(FilmList mvdb.ApiResponse, categoryId string) Node {
 			append([]Node{
 				Class("columns is-mobile pl-5"),
 				ID(categoryId),
-				Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;scroll-behavior: smooth;position: relative;"),
-			}, cards[:]...)...,
+				Attr(
+					"style",
+					"overflow-x: auto; "+
+						"flex-wrap: nowrap; "+
+						"margin: 0; "+
+						"scroll-behavior: smooth; "+
+						"position: relative;",
+				),
+			}, CardArray[:]...)...,
 		),
 	)
 }
 
-func CreateCategory(MovieList mvdb.ApiResponse, Name string) Node {
+func CreateCategory(FilmList mvdb.ApiResponse, Name string) Node {
 	categoryId := fmt.Sprintf("category-grid-%d", CategoryIndex)
 	CategoryIndex = CategoryIndex + 1
 	return Div(
@@ -123,23 +142,20 @@ func CreateCategory(MovieList mvdb.ApiResponse, Name string) Node {
 			Attr("style", "position: relative;"),
 			Text(Name),
 		),
-		CreateCardGrill(MovieList, categoryId),
+		CreateCardGrill(FilmList, categoryId),
 	)
 }
 
-func CardGrill() Node {
-	categories := []Node{}
-	var PopularMovies mvdb.ApiResponse
-	var PopularSeries mvdb.ApiResponse
+func FilmCategory(Request, CategoryName string) Node {
+	var FilmList mvdb.ApiResponse
 
-	json.Unmarshal([]byte(mvdb.CallMvdbDefault("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1&region=fr-FR")), &PopularMovies)
-	json.Unmarshal([]byte(mvdb.CallMvdbDefault("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1&region=fr-FR")), &PopularSeries)
+	json.Unmarshal(mvdb.CallMvdbDefault(Request), &FilmList)
 
-	categories = append(categories, CreateCategory(PopularMovies, "Popular Movies"))
-	categories = append(categories, CreateCategory(PopularSeries, "Popular Series"))
-	categories = append(categories, Div(ID("film-card")))
+	Category := CreateCategory(FilmList, CategoryName)
 
-	CategoryIndex = 0
+	if CategoryIndex == 99 {
+		CategoryIndex = 0
+	}
 
-	return Div(append([]Node{Class("categories-container")}, categories...)...)
+	return Category
 }

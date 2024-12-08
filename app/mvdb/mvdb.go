@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-type Movie struct {
+type Film struct {
 	ImagePath  string `json:"backdrop_path"`
 	PosterPath string `json:"poster_path"`
 	Title      string `json:"title"`
@@ -24,14 +24,14 @@ type Movie struct {
 }
 
 type ApiResponse struct {
-	Results []Movie `json:"results"`
+	Results []Film `json:"results"`
 }
 
-func CallMvdbDefault(link string) string {
+func CallMvdbDefault(link string) []byte {
 	req, err := http.NewRequest("GET", link, nil)
 	if err != nil {
-		fmt.Println("Erreur lors de la création de la requête :", err)
-		return ""
+		fmt.Println("Error creating the request:", err)
+		return nil
 	}
 
 	req.Header.Add("accept", "application/json")
@@ -39,18 +39,18 @@ func CallMvdbDefault(link string) string {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Println("Erreur lors de l'exécution de la requête :", err)
-		return ""
+		fmt.Println("Error executing the request:", err)
+		return nil
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println("Erreur lors de la lecture de la réponse :", err)
-		return ""
+		fmt.Println("Error reading the response:", err)
+		return nil
 	}
 
-	return string(body)
+	return []byte(body)
 }
 
 func SearchTrailer(FilmID, Lang string) string {
@@ -58,10 +58,13 @@ func SearchTrailer(FilmID, Lang string) string {
 
 	response := CallMvdbDefault("https://api.themoviedb.org/3/movie/" + FilmID + "/videos" + Lang)
 
-	json.Unmarshal([]byte(response), &Trailers)
+	json.Unmarshal(response, &Trailers)
 
 	for _, Trailer := range Trailers.Results {
-		if Trailer.TrailerOfficial && Trailer.TrailerSite == "YouTube" && Trailer.TrailerSize == 1080 && (Trailer.TrailerType == "Teaser" || Trailer.TrailerType == "Trailer") {
+		if Trailer.TrailerOfficial &&
+			Trailer.TrailerSite == "YouTube" &&
+			Trailer.TrailerSize == 1080 &&
+			(Trailer.TrailerType == "Teaser" || Trailer.TrailerType == "Trailer") {
 			return "https://www.youtube.com/embed/" + Trailer.TrailerKey
 		}
 	}
