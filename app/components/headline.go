@@ -8,7 +8,7 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func HeadlineDesktop(Film mvdb.Movie, Name string) Node {
+func HeadlineDesktop(Film mvdb.Film, Name string) Node {
 	return Div(Class("headline is-hidden-mobile"),
 		Attr("style", "height: 41vw;position: relative;"),
 		Div(Class("headline-gradient-left")),
@@ -23,11 +23,14 @@ func HeadlineDesktop(Film mvdb.Movie, Name string) Node {
 			),
 		),
 		Div(Class("headline-gradient")),
-		Img(Class("headline-img"), Src("https://image.tmdb.org/t/p/original"+Film.ImagePath)),
+		Img(
+			Class("headline-img"),
+			Src("https://image.tmdb.org/t/p/original"+Film.ImagePath),
+		),
 	)
 }
 
-func HeadlineMobile(Film mvdb.Movie, Name string) Node {
+func HeadlineMobile(Film mvdb.Film, Name string) Node {
 	return Div(Class("headline-mobile is-hidden-tablet"),
 		Div(Class("headline-mobile-gradient")),
 		Div(Class("headline-mobile-content"),
@@ -39,21 +42,24 @@ func HeadlineMobile(Film mvdb.Movie, Name string) Node {
 				),
 			),
 		),
-		Img(Class("headline-mobile-img"), Src("https://image.tmdb.org/t/p/original"+Film.PosterPath)),
+		Img(
+			Class("headline-mobile-img"),
+			Src("https://image.tmdb.org/t/p/original"+Film.PosterPath),
+		),
 	)
 }
 
-func HeadLine() Node {
-	var TopRatedMovies mvdb.ApiResponse
+func HeadLine(Request string) Node {
+	var FilmList mvdb.ApiResponse
 
-	json.Unmarshal([]byte(mvdb.CallMvdbDefault("https://api.themoviedb.org/3/movie/top_rated?language=fr-FR&page=1")), &TopRatedMovies)
+	json.Unmarshal(mvdb.CallMvdbDefault(Request), &FilmList)
 
-	Name := TopRatedMovies.Results[0].Title
+	Name := FilmList.Results[0].Title
 	if Name == "" {
-		Name = TopRatedMovies.Results[0].Name
+		Name = FilmList.Results[0].Name
 	}
 	return Div(
-		HeadlineDesktop(TopRatedMovies.Results[0], Name),
-		HeadlineMobile(TopRatedMovies.Results[0], Name),
+		HeadlineDesktop(FilmList.Results[0], Name),
+		HeadlineMobile(FilmList.Results[0], Name),
 	)
 }
