@@ -2,6 +2,8 @@ services:
   crocotube:
     build: app
     env_file: .env
+    environment:
+      MOVIE_DB_API: ${MOVIE_DB_API}
     develop:
       watch:
         - action: rebuild
