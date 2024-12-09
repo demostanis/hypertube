@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -68,13 +69,13 @@ func createUser(params SigninParams, token string) error {
 		return nil
 	}
 
-	var data map[string]interface{}
+	var data map[string]string
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return fmt.Errorf("Error parsing response %s", err.Error())
 	}
 
-	return fmt.Errorf("Error registering: %s", data["errorMessage"])
+	return errors.New(data["errorMessage"])
 }
 
 func APISigninHandler(w http.ResponseWriter, r *http.Request) {
@@ -89,15 +90,13 @@ func APISigninHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if params.Password != params.PasswordCheck {
-		fmt.Printf("Error: Password doesn't match\n")
-		ghttp.Adapt(pages.SigninHandler)(w, r)
+		apiError(w, r, pages.Signin, "Password doesn't match")
 		return
 	}
 
 	err = createUser(params, token)
 	if err != nil {
-		fmt.Printf("Failed to create user: %s\n", err.Error())
-		ghttp.Adapt(pages.SigninHandler)(w, r)
+		apiError(w, r, pages.Signin, err.Error())
 		return
 	}
 

@@ -15,7 +15,7 @@ func Center(content ...Node) Node {
 		Div(children...))
 }
 
-func Login() Node {
+func Login(error string) Node {
 	return Form(Method("Post"), Action("/login"),
 		Center(
 			P(Class("title"), Text("Log in to Hypertube")),
@@ -26,6 +26,10 @@ func Login() Node {
 			Input(Class("input password"),
 				Placeholder("Password..."),
 				Name("password")),
+
+			If(error != "",
+				P(Class("has-text-danger"), Text(error)),
+			),
 			Button(Class("button"),
 				Text("Log in"),
 			),

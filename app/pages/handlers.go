@@ -11,11 +11,11 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
-	return Login(), nil
+	return Login(""), nil
 }
 
 func SigninHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
-	return Signin(), nil
+	return Signin(""), nil
 }
 
 func InternalErrorHandler(w http.ResponseWriter, r *http.Request) (Node, error) {

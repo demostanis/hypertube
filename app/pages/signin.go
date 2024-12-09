@@ -6,11 +6,11 @@ import (
 	. "maragu.dev/gomponents"
 )
 
-func Signin() Node {
+func Signin(err string) Node {
 	return components.Page(
 		components.Navbar(),
 		components.Contents(
-			components.Signin(),
+			components.Signin(err),
 		),
 		components.Foot(),
 	)
