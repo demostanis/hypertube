@@ -17,3 +17,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
 func SigninHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
 	return Signin(), nil
 }
+
+func InternalErrorHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
+	return InternalError(), nil
+}
