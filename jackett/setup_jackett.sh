@@ -41,6 +41,9 @@ EOF
 done
 chmod 755 -R /config/Jackett/Indexers/
 
+flaresolverr_api_url="\"http:\\/\\/flaresolverr:8198\\/v1\""
+sed -i 's/"FlareSolverrUrl": .*/"FlareSolverrUrl": '$flaresolverr_api_url',/' /config/Jackett/ServerConfig.json
+
 # restart jackett so it reads /config
 s6-svc -r /run/service/svc-jackett
 
