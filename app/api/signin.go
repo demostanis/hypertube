@@ -84,7 +84,7 @@ func APISigninHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := adminAuthorization()
 	if err != nil {
-		fmt.Printf("Failed to get authorization: %s\n", err.Error())
+		ghttp.Adapt(pages.InternalErrorHandler)(w, r)
 		return
 	}
 
