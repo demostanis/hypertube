@@ -10,10 +10,12 @@ import (
 
 func handleScrollLeft(w http.ResponseWriter, r *http.Request) {
 	scrollLeft := r.URL.Query().Get("scrollLeft")
+	offsetWidth := r.URL.Query().Get("offsetWidth")
 
-	scrollPos, _ := strconv.Atoi(scrollLeft)
+	scrollLeftInt, _ := strconv.Atoi(scrollLeft)
+	offsetWidthInt, _ := strconv.Atoi(offsetWidth)
 
-	if scrollPos-1883 <= 0 {
+	if scrollLeftInt-offsetWidthInt <= 0 {
 		fmt.Fprintf(w, "0")
 	} else {
 		fmt.Fprintf(w, "1")
@@ -22,10 +24,14 @@ func handleScrollLeft(w http.ResponseWriter, r *http.Request) {
 
 func handleScrollRight(w http.ResponseWriter, r *http.Request) {
 	scrollLeft := r.URL.Query().Get("scrollLeft")
+	offsetWidth := r.URL.Query().Get("offsetWidth")
+	maxScroll := r.URL.Query().Get("maxScroll")
 
-	scrollPos, _ := strconv.Atoi(scrollLeft)
+	scrollLeftInt, _ := strconv.Atoi(scrollLeft)
+	offsetWidthInt, _ := strconv.Atoi(offsetWidth)
+	maxScrollInt, _ := strconv.Atoi(maxScroll)
 
-	if scrollPos+1883 >= 1883*2 {
+	if scrollLeftInt+offsetWidthInt >= maxScrollInt {
 		fmt.Fprintf(w, "0")
 	} else {
 		fmt.Fprintf(w, "1")

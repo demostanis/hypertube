@@ -32,6 +32,6 @@ func main() {
 	if !ok {
 		port = "8080"
 	}
-	fmt.Println("serving at http://localhost:" + port)
+	fmt.Println("serving at http://0.0.0.0:" + port)
 	http.ListenAndServe(":"+port, nil)
 }

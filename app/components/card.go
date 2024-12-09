@@ -18,26 +18,29 @@ var CategoryIndex = 0
 
 var ScrollLeftAttr = `event.preventDefault();
 		const container = document.getElementById('%s');
-		container.scrollLeft -= 1883;
 		
-		fetch('/handle-scroll-left?scrollLeft=' + container.scrollLeft)
-			.then(response => response.text())
-			.then(opacity => {
-				document.getElementById('%s-left').style.opacity = opacity;
-				document.getElementById('%s-right').style.opacity = 1;
-			});
+		fetch('/handle-scroll-left?scrollLeft=' + container.scrollLeft + '&offsetWidth=' + container.offsetWidth)
+		.then(response => response.text())
+		.then(opacity => {
+			document.getElementById('%s-left').style.opacity = opacity;
+			document.getElementById('%s-right').style.opacity = 1;
+		});
+		
+		container.scrollLeft -= container.offsetWidth;
 		return false;`
 
 var ScrollRightAttr = `event.preventDefault();
 		const container = document.getElementById('%s');
-		container.scrollLeft += 1883;
 		
-		fetch('/handle-scroll-right?scrollLeft=' + container.scrollLeft)
-			.then(response => response.text())
-			.then(opacity => {
-				document.getElementById('%s-left').style.opacity = 1;
-				document.getElementById('%s-right').style.opacity = opacity;
-			});
+		const maxScrollLeft = container.scrollWidth - container.clientWidth;
+		
+		fetch('/handle-scroll-right?scrollLeft=' + container.scrollLeft + '&offsetWidth=' + container.offsetWidth + '&maxScroll=' + maxScrollLeft)
+		.then(response => response.text())
+		.then(opacity => {
+			document.getElementById('%s-left').style.opacity = 1;
+			document.getElementById('%s-right').style.opacity = opacity;
+		});
+		container.scrollLeft += container.offsetWidth;
 		return false;`
 
 type Movie struct {
