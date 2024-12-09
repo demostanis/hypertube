@@ -14,8 +14,8 @@ var CategoryIndex = 0
 
 type Movie struct {
 	PosterPath    string `json:"poster_path"`
-	OriginalTitle string `json:"original_title"`
-	OriginalName  string `json:"original_name"`
+	OriginalTitle string `json:"title"`
+	OriginalName  string `json:"name"`
 }
 
 type ApiResponse struct {
@@ -113,12 +113,12 @@ func CardGrill() Node {
 	var PopularMovies ApiResponse
 	var PopularSeries ApiResponse
 
-	err := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1")), &PopularMovies)
+	err := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1&region=fr-FR")), &PopularMovies)
 	if err != nil {
 		fmt.Println("Erreur lors du parsing JSON :", err)
 		return Div(Text("Erreur lors de la récupération des films."))
 	}
-	err1 := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1")), &PopularSeries)
+	err1 := json.Unmarshal([]byte(CallMvdbDefault("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1&region=fr-FR")), &PopularSeries)
 	if err1 != nil {
 		fmt.Println("Erreur lors du parsing JSON :", err1)
 		return Div(Text("Erreur lors de la récupération des films."))
