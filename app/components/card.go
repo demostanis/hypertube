@@ -18,28 +18,22 @@ var CategoryIndex = 0
 
 var ScrollLeftAttr = `event.preventDefault();
 		const container = document.getElementById('%s');
-		
-		fetch('/handle-scroll-left?scrollLeft=' + container.scrollLeft + '&offsetWidth=' + container.offsetWidth)
-		.then(response => response.text())
-		.then(opacity => {
-			document.getElementById('%s-left').style.opacity = opacity;
-			document.getElementById('%s-right').style.opacity = 1;
-		});
+
+		const opacity = (container.scrollLeft - container.offsetWidth <= 0) ? 0 : 1;
+		document.getElementById('%s-left').style.opacity = opacity;
+		document.getElementById('%s-right').style.opacity = 1;
 		
 		container.scrollLeft -= container.offsetWidth;
 		return false;`
 
 var ScrollRightAttr = `event.preventDefault();
 		const container = document.getElementById('%s');
-		
 		const maxScrollLeft = container.scrollWidth - container.clientWidth;
 		
-		fetch('/handle-scroll-right?scrollLeft=' + container.scrollLeft + '&offsetWidth=' + container.offsetWidth + '&maxScroll=' + maxScrollLeft)
-		.then(response => response.text())
-		.then(opacity => {
-			document.getElementById('%s-left').style.opacity = 1;
-			document.getElementById('%s-right').style.opacity = opacity;
-		});
+		const opacity = (container.scrollLeft + container.offsetWidth >= maxScrollLeft) ? 0 : 1;
+		document.getElementById('%s-left').style.opacity = 1;
+		document.getElementById('%s-right').style.opacity = opacity;
+		
 		container.scrollLeft += container.offsetWidth;
 		return false;`
 
