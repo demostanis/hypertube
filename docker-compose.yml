@@ -1,5 +1,5 @@
 services:
-  hypertube:
+  crocotube:
     build: app
     env_file: .env
     develop:
