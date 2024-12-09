@@ -13,17 +13,17 @@ func handleEmpty(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func handleShowFilmPopup(w http.ResponseWriter, r *http.Request) {
-	FilmId := r.URL.Query().Get("filmId")
-	FilmTitle := r.URL.Query().Get("titlefilm")
-	FilmOverview := r.URL.Query().Get("overview")
-	FilmImage := r.URL.Query().Get("image")
-	TrailerLink := mvdb.FindTrailer(FilmId)
+func handleShowContentPopup(w http.ResponseWriter, r *http.Request) {
+	ContentId := r.URL.Query().Get("Id")
+	ContentTitle := r.URL.Query().Get("title")
+	ContentOverview := r.URL.Query().Get("overview")
+	ContentImage := r.URL.Query().Get("image")
+	TrailerLink := mvdb.FindTrailer(ContentId)
 
-	FilmCard := components.CreatePopup(FilmTitle, FilmOverview, TrailerLink, FilmImage)
+	ContentCard := components.CreatePopup(ContentTitle, ContentOverview, TrailerLink, ContentImage)
 
 	w.Header().Set("Content-Type", "text/html")
-	err := FilmCard.Render(w)
+	err := ContentCard.Render(w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

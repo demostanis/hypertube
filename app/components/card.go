@@ -76,42 +76,42 @@ func ScrollArrows(categoryId string) Node {
 	)
 }
 
-func CreateCards(FilmList mvdb.ApiResponse, categoryId string) []Node {
-	CardArray := make([]Node, len(FilmList.Results))
+func CreateCards(ContentList mvdb.ApiResponse, categoryId string) []Node {
+	CardArray := make([]Node, len(ContentList.Results))
 
-	for i, film := range FilmList.Results {
-		Title := film.Title
+	for i, Content := range ContentList.Results {
+		Title := Content.Title
 		if Title == "" {
-			Title = film.Name
+			Title = Content.Name
 		}
 
 		CardArray[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)),
 			Attr("style", "display: flex;"),
 			Div(
 				Class("cell is-clickable"),
-				Attr("hx-get", "/show-film-popup"),
+				Attr("hx-get", "/show-content-popup"),
 				Attr("hx-trigger", "click"),
-				Attr("hx-target", "#film-popup"),
+				Attr("hx-target", "#content-popup"),
 				Attr("hx-swap", "innerHTML"),
 				Attr(
 					"hx-vals",
 					fmt.Sprintf(
-						`{"filmId": %d, "titlefilm": "%s", "overview": "%s", "image": "%s"}`,
-						film.Id,
+						`{"Id": %d, "title": "%s", "overview": "%s", "image": "%s"}`,
+						Content.Id,
 						Title,
-						film.Overview,
-						film.ImagePath,
+						Content.Overview,
+						Content.ImagePath,
 					),
 				),
-				Card(film.PosterPath),
+				Card(Content.PosterPath),
 			),
 		)
 	}
 	return CardArray
 }
 
-func CreateCardGrill(FilmList mvdb.ApiResponse, categoryId string) Node {
-	CardArray := CreateCards(FilmList, categoryId)
+func CreateCardGrill(ContentList mvdb.ApiResponse, categoryId string) Node {
+	CardArray := CreateCards(ContentList, categoryId)
 
 	return Div(Class("list"),
 		ScrollArrows(categoryId),
@@ -132,7 +132,7 @@ func CreateCardGrill(FilmList mvdb.ApiResponse, categoryId string) Node {
 	)
 }
 
-func CreateCategory(FilmList mvdb.ApiResponse, Name string) Node {
+func CreateCategory(ContentList mvdb.ApiResponse, Name string) Node {
 	categoryId := fmt.Sprintf("category-grid-%d", CategoryIndex)
 	CategoryIndex = CategoryIndex + 1
 	return Div(
@@ -142,16 +142,16 @@ func CreateCategory(FilmList mvdb.ApiResponse, Name string) Node {
 			Attr("style", "position: relative;"),
 			Text(Name),
 		),
-		CreateCardGrill(FilmList, categoryId),
+		CreateCardGrill(ContentList, categoryId),
 	)
 }
 
-func FilmCategory(Request, CategoryName string) Node {
-	var FilmList mvdb.ApiResponse
+func ContentCategory(Request, CategoryName string) Node {
+	var ContentList mvdb.ApiResponse
 
-	json.Unmarshal(mvdb.CallMvdbDefault(Request), &FilmList)
+	json.Unmarshal(mvdb.CallMvdbDefault(Request), &ContentList)
 
-	Category := CreateCategory(FilmList, CategoryName)
+	Category := CreateCategory(ContentList, CategoryName)
 
 	if CategoryIndex == 99 {
 		CategoryIndex = 0

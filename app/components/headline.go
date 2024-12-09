@@ -8,13 +8,13 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func HeadlineDesktop(Film mvdb.Film, Name string) Node {
+func HeadlineDesktop(Content mvdb.Content, Name string) Node {
 	return Div(Class("headline is-hidden-mobile"),
 		Attr("style", "height: 41vw;position: relative;"),
 		Div(Class("headline-gradient-left")),
 		Div(Class("headline-content"),
 			Div(Class("headline-tilte"), Text(Name)),
-			Div(Class("headline-overview"), Text(Film.Overview)),
+			Div(Class("headline-overview"), Text(Content.Overview)),
 			Button(Class("button"), ID("play-button"),
 				Span(Attr("style", "color: mediumslateblue;"), Text("PLAY")),
 				Span(Class("icon"), Attr("style", "color: mediumslateblue;"),
@@ -25,12 +25,12 @@ func HeadlineDesktop(Film mvdb.Film, Name string) Node {
 		Div(Class("headline-gradient")),
 		Img(
 			Class("headline-img"),
-			Src("https://image.tmdb.org/t/p/original"+Film.ImagePath),
+			Src("https://image.tmdb.org/t/p/original"+Content.ImagePath),
 		),
 	)
 }
 
-func HeadlineMobile(Film mvdb.Film, Name string) Node {
+func HeadlineMobile(Content mvdb.Content, Name string) Node {
 	return Div(Class("headline-mobile is-hidden-tablet"),
 		Div(Class("headline-mobile-gradient")),
 		Div(Class("headline-mobile-content"),
@@ -44,22 +44,22 @@ func HeadlineMobile(Film mvdb.Film, Name string) Node {
 		),
 		Img(
 			Class("headline-mobile-img"),
-			Src("https://image.tmdb.org/t/p/original"+Film.PosterPath),
+			Src("https://image.tmdb.org/t/p/original"+Content.PosterPath),
 		),
 	)
 }
 
 func HeadLine(Request string) Node {
-	var FilmList mvdb.ApiResponse
+	var ContentList mvdb.ApiResponse
 
-	json.Unmarshal(mvdb.CallMvdbDefault(Request), &FilmList)
+	json.Unmarshal(mvdb.CallMvdbDefault(Request), &ContentList)
 
-	Name := FilmList.Results[0].Title
+	Name := ContentList.Results[0].Title
 	if Name == "" {
-		Name = FilmList.Results[0].Name
+		Name = ContentList.Results[0].Name
 	}
 	return Div(
-		HeadlineDesktop(FilmList.Results[0], Name),
-		HeadlineMobile(FilmList.Results[0], Name),
+		HeadlineDesktop(ContentList.Results[0], Name),
+		HeadlineMobile(ContentList.Results[0], Name),
 	)
 }
