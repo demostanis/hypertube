@@ -11,9 +11,9 @@ curl() {
 }
 
 enabled_indexers='[
-	"cpasbien",
+	"cpasbienclone",
 	"torrent9",
-	"oxtorrent",
+	"oxtorrent-co",
 	"zetorrents"
 ]'
 
