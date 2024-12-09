@@ -5,24 +5,45 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func navbarItemStart(name string, path string) Node {
-	return A(Class("navbar-item"), Attr("style", "border-right: solid 1px mediumslateblue; color: mediumslateblue;"), Href(path), Text(name))
+func navbarItemStart(name, path, icon string) Node {
+	return A(
+		Class("navbar-item"),
+		Attr("style", "color: mediumslateblue; margin-right: 20px;"),
+		Href(path),
+		Span(
+			Class("icon"),
+			I(Class("fa-solid fa-"+icon)),
+		),
+		Text(name),
+	)
 }
 
-func navbarItemEnd(name string, path string) Node {
-	return A(Class("navbar-item"), Attr("style", "border-left: solid 1px mediumslateblue; color: mediumslateblue;"), Href(path), Text(name))
+func navbarItemEnd(name, path, icon string) Node {
+	return A(
+		Class("navbar-item"),
+		Attr("style", "color: mediumslateblue; margin-left: 20px;"),
+		Href(path),
+		Span(
+			Class("icon"),
+			I(Class("fa-solid fa-"+icon)),
+		),
+		Text(name),
+	)
 }
 
 func Navbar() Node {
-	return Nav(Class("navbar"),
+	return Nav(Class("navbar is-fixed-top"),
+		Attr("style", "background-color: #1f2226;"),
 		Div(Class("navbar-menu"),
 			Div(Class("navbar-start"),
-				navbarItemStart("Home", "/"),
-				navbarItemStart("Videos", "/videos"),
+				Attr("style", "margin-left: 68px"),
+				navbarItemStart("Home", "/", "house"),
+				navbarItemStart("Videos", "/videos", "film"),
 			),
 			Div(Class("navbar-end"),
-				navbarItem("Login", "/login"),
-				navbarItem("Signin", "/signin"),
+				Attr("style", "margin-right: 68px"),
+				navbarItemEnd("Resheach...", "/", "magnifying-glass"),
+				navbarItemEnd("Login", "/login", "user"),
 			),
 		),
 	)
