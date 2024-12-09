@@ -51,7 +51,28 @@ func Card(poster string) Node {
 	)
 }
 
-func CreateCardGrill(FilmList mvdb.ApiResponse, categoryId string) Node {
+func ScrollArrows(categoryId string) Node {
+	return Div(Class("control arrows is-hidden-mobile"),
+		Button(
+			Class("arrow-left"),
+			ID(fmt.Sprintf("%s-left", categoryId)),
+			Attr("onclick", fmt.Sprintf(ScrollLeftAttr, categoryId, categoryId, categoryId)),
+			Span(Class("icon"),
+				I(Class("fa-solid fa-chevron-left"), Attr("style", "scale: 1.5;")),
+			),
+		),
+		Button(
+			Class("arrow-right"),
+			ID(fmt.Sprintf("%s-right", categoryId)),
+			Attr("onclick", fmt.Sprintf(ScrollRightAttr, categoryId, categoryId, categoryId)),
+			Span(Class("icon"),
+				I(Class("fa-solid fa-chevron-right"), Attr("style", "scale: 1.5;")),
+			),
+		),
+	)
+}
+
+func CreateCards(FilmList mvdb.ApiResponse, categoryId string) []Node {
 	cards := make([]Node, len(FilmList.Results))
 
 	for i, movie := range FilmList.Results {
@@ -74,26 +95,14 @@ func CreateCardGrill(FilmList mvdb.ApiResponse, categoryId string) Node {
 			),
 		)
 	}
+	return cards
+}
+
+func CreateCardGrill(FilmList mvdb.ApiResponse, categoryId string) Node {
+	cards := CreateCards(FilmList, categoryId)
 
 	return Div(Class("list"),
-		Div(Class("control arrows is-hidden-mobile"),
-			Button(
-				Class("arrow-left"),
-				ID(fmt.Sprintf("%s-left", categoryId)),
-				Attr("onclick", fmt.Sprintf(ScrollLeftAttr, categoryId, categoryId, categoryId)),
-				Span(Class("icon"),
-					I(Class("fa-solid fa-chevron-left"), Attr("style", "scale: 1.5;")),
-				),
-			),
-			Button(
-				Class("arrow-right"),
-				ID(fmt.Sprintf("%s-right", categoryId)),
-				Attr("onclick", fmt.Sprintf(ScrollRightAttr, categoryId, categoryId, categoryId)),
-				Span(Class("icon"),
-					I(Class("fa-solid fa-chevron-right"), Attr("style", "scale: 1.5;")),
-				),
-			),
-		),
+		ScrollArrows(categoryId),
 		Div(
 			append([]Node{
 				Class("columns is-mobile pl-5"),
@@ -118,54 +127,14 @@ func CreateCategory(MovieList mvdb.ApiResponse, Name string) Node {
 	)
 }
 
-func HeadLine(film mvdb.Movie) Node {
-	Name := film.Title
-	if Name == "" {
-		Name = film.Name
-	}
-	return Div(
-		Div(Class("headline is-hidden-mobile"),
-			Attr("style", "height: 41vw;position: relative;"),
-			Div(Class("headline-gradient-left")),
-			Div(Class("headline-content"),
-				Div(Class("headline-tilte"), Text(Name)),
-				Div(Class("headline-overview"), Text(film.Overview)),
-				Button(Class("button"), ID("play-button"),
-					Span(Attr("style", "color: mediumslateblue;"), Text("PLAY")),
-					Span(Class("icon"), Attr("style", "color: mediumslateblue;"),
-						I(Class("fa-solid fa-play"), Attr("aria-hidden", "true")),
-					),
-				),
-			),
-			Div(Class("headline-gradient")),
-			Img(Class("headline-img"), Src("https://image.tmdb.org/t/p/original"+film.ImagePath)),
-		),
-		Div(Class("headline-mobile is-hidden-tablet"),
-			Div(Class("headline-mobile-gradient")),
-			Div(Class("headline-mobile-content"),
-				Div(Class("headline-mobile-tilte"), Text(Name)),
-				Button(Class("button"), ID("play-mobile-button"),
-					Span(Attr("style", "color: mediumslateblue;"), Text("PLAY")),
-					Span(Class("icon"), Attr("style", "color: mediumslateblue;"),
-						I(Class("fa-solid fa-play"), Attr("aria-hidden", "true")),
-					),
-				),
-			),
-			Img(Class("headline-mobile-img"), Src("https://image.tmdb.org/t/p/original"+film.PosterPath)),
-		))
-}
-
 func CardGrill() Node {
 	categories := []Node{}
-	var TopRatedMovies mvdb.ApiResponse
 	var PopularMovies mvdb.ApiResponse
 	var PopularSeries mvdb.ApiResponse
 
-	json.Unmarshal([]byte(mvdb.CallMvdbDefault("https://api.themoviedb.org/3/movie/top_rated?language=fr-FR&page=1")), &TopRatedMovies)
 	json.Unmarshal([]byte(mvdb.CallMvdbDefault("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1&region=fr-FR")), &PopularMovies)
 	json.Unmarshal([]byte(mvdb.CallMvdbDefault("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1&region=fr-FR")), &PopularSeries)
 
-	categories = append(categories, HeadLine(TopRatedMovies.Results[0]))
 	categories = append(categories, CreateCategory(PopularMovies, "Popular Movies"))
 	categories = append(categories, CreateCategory(PopularSeries, "Popular Series"))
 	categories = append(categories, Div(ID("film-card")))
