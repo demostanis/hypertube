@@ -16,8 +16,8 @@ import (
 func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	http.HandleFunc("/empty", handleEmpty)
-	http.HandleFunc("/show-content-popup", handleShowContentPopup)
+	http.HandleFunc("/empty", pages.HandleEmpty)
+	http.HandleFunc("/show-content-popup", pages.HandleShowContentPopup)
 
 	r := pat.New()
 

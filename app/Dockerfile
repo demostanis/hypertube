@@ -1,6 +1,6 @@
 FROM golang:1.23.4
 
-COPY app/static /app/static
+COPY static /app/static
 
 WORKDIR /app
 

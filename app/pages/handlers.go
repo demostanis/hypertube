@@ -5,15 +5,14 @@ import (
 
 	"github.com/demostanis/hypertube/components"
 	"github.com/demostanis/hypertube/mvdb"
-	"github.com/demostanis/hypertube/pages"
 	. "maragu.dev/gomponents"
 )
 
-func handleEmpty(w http.ResponseWriter, r *http.Request) {
+func HandleEmpty(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func handleShowContentPopup(w http.ResponseWriter, r *http.Request) {
+func HandleShowContentPopup(w http.ResponseWriter, r *http.Request) {
 	ContentId := r.URL.Query().Get("Id")
 	ContentTitle := r.URL.Query().Get("title")
 	ContentOverview := r.URL.Query().Get("overview")
