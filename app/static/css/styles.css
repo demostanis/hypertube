@@ -1,7 +1,7 @@
 .columns.is-mobile {
 	-ms-overflow-style: none;
 	scrollbar-width: none;
-	padding: 1rem;
+	/* padding: 1rem; */
 }
 
 .columns.is-mobile::-webkit-scrollbar {
@@ -13,10 +13,14 @@
 	width: 250px !important;
 }
 
-.category {
+.list {
 	position: relative;
 	overflow: hidden;
 }
+
+/* .category-title {
+	margin-left: 50px !important;
+} */
 
 .control.arrows {
 	position: absolute;
@@ -24,6 +28,10 @@
 	height: 100%;
 	pointer-events: none;
 	z-index: 5;
+}
+
+.arrow-left {
+	opacity: 0;
 }
 
 .arrow-left, .arrow-right {
