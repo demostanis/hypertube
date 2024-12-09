@@ -41,6 +41,7 @@ type Movie struct {
 	PosterPath    string `json:"poster_path"`
 	OriginalTitle string `json:"title"`
 	OriginalName  string `json:"name"`
+	Overview      string `json:"overview"`
 }
 
 type ApiResponse struct {
@@ -73,11 +74,13 @@ func CallMvdbDefault(link string) string {
 	return string(body)
 }
 
-func Card(name, poster string) Node {
+func Card(name, poster, overview string) Node {
 	return Div(Class("card"),
+		Attr("data-title", name),
+		Attr("data-overview", overview),
 		Div(Class("card-image"),
 			Figure(Class("image is-4by5"),
-				Img(Src("https://image.tmdb.org/t/p/w500/"+poster)),
+				Img(Class("poster-file"), Src("https://image.tmdb.org/t/p/w500/"+poster)),
 			),
 		),
 		Div(Class("card-content"),
@@ -98,7 +101,7 @@ func CreateCardGrill(FilmList ApiResponse, categoryId string) Node {
 
 		cards[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)), Div(
 			Class("cell"),
-			Card(title, movie.PosterPath),
+			Card(title, movie.PosterPath, movie.Overview),
 		))
 	}
 
