@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/demostanis/hypertube/mvdb"
 	. "maragu.dev/gomponents"
@@ -85,6 +86,7 @@ func CreateCards(ContentList mvdb.ApiResponse, categoryId string) []Node {
 			Title = Content.Name
 		}
 
+		Content.Overview = strings.ReplaceAll(Content.Overview, "\"", "")
 		CardArray[i] = Div(Class("column pl-0 pr-5"), ID(categoryId+"-"+strconv.Itoa(i)),
 			Attr("style", "display: flex;"),
 			Div(
