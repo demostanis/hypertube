@@ -20,8 +20,7 @@ func APILoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := auth("crocotube-auth", params.Username, params.Password, "default")
 	if err != nil {
-		fmt.Printf("error: %s\n", err)
-		ghttp.Adapt(pages.InternalErrorHandler)(w, r)
+		apiError(w, r, pages.Login, err.Error())
 		return
 	}
 

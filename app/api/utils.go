@@ -2,12 +2,15 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 
 	"github.com/gorilla/schema"
+	. "maragu.dev/gomponents"
+	ghttp "maragu.dev/gomponents/http"
 )
 
 var decoder = schema.NewDecoder()
@@ -15,6 +18,21 @@ var decoder = schema.NewDecoder()
 func bad(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write([]byte("bad request"))
+}
+
+type Handler = func(string) Node
+
+func apiError(
+	w http.ResponseWriter,
+	r *http.Request,
+	h Handler,
+	err string,
+) (Node, error) {
+	wrapper := func(w http.ResponseWriter, r *http.Request) (Node, error) {
+		return h(err), nil
+	}
+	ghttp.Adapt(wrapper)(w, r)
+	return wrapper(w, r)
 }
 
 func paramsInto(
@@ -63,7 +81,7 @@ func auth(cid string, username string, password string, realm string) (string, e
 	}
 
 	if data.Error != "" {
-		return "", fmt.Errorf("Error from keycloak: %s", data.Error)
+		return "", errors.New(data.Error)
 	}
 
 	return data.AccessToken, nil

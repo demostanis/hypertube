@@ -5,7 +5,7 @@ import (
 	. "maragu.dev/gomponents/html"
 )
 
-func Signin() Node {
+func Signin(error string) Node {
 	return Form(Method("Post"), Action("/signin"),
 		Center(
 			P(Class("title"), Text("Sign in to Crocotube")),
@@ -38,6 +38,10 @@ func Signin() Node {
 				Type("password"),
 				Placeholder("Confirm Password..."),
 				Name("passwordCheck")),
+
+			If(error != "",
+				P(Class("has-text-danger"), Text(error)),
+			),
 			Button(Class("button"),
 				Text("Sign in"),
 			),
