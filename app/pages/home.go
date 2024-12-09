@@ -7,5 +7,5 @@ import (
 )
 
 func Home() Node {
-	return components.Page(components.Navbar(), components.CardGrill(), components.CardGrill(), components.Foot())
+	return components.Page(components.Navbar(), components.CardGrill(), components.Foot())
 }

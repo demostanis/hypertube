@@ -62,30 +62,64 @@ func Card(name, poster string) Node {
 
 var PopularMoviesDisplayed = 0
 
-func CreateCardGrill() Node {
-	var response ApiResponse
+// func CreateCardGrill(FilmList ApiResponse) Node {
+// 	// Create an array large enough to hold all movies
+// cards := make([]Node, len(FilmList.Results))
 
-	err := json.Unmarshal([]byte(GetPopularMovies()), &response)
-	if err != nil {
-		fmt.Println("Erreur lors du parsing JSON :", err)
-		return Div(Text("Erreur lors de la récupération des films."))
+// // Fill the array with all movies
+// for i, movie := range FilmList.Results {
+// 	cards[i] = Div(Class("column"), Div(
+// 		Class("cell"),
+// 		Card(movie.OriginalTitle, movie.PosterPath),
+// 	),)
+// }
+
+// 	return Div(Class("category"),
+// 	Div(Class("control arrows"),
+// 		Button(Class("arrow-left"), Text("◀"),
+// 			Attr("onclick", "scrollGridLeft()"),
+// 		),
+// 		Button(Class("arrow-right"), Text("▶"),
+// 			Attr("onclick", "scrollGridRight()"),
+// 		),
+// 	),
+// 	Div(Class("columns is-mobile"),
+// 		Div(append([]Node{Class("grid is-column-gap-4.5"), Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;")}, cards[:]...)...),
+// 	),
+// 	Script(Src("/static/js/scroll.js")),
+// )
+// }
+
+func CreateCardGrill(FilmList ApiResponse) Node {
+	cards := make([]Node, len(FilmList.Results))
+
+	// Fill the array with all movies
+	for i, movie := range FilmList.Results {
+		cards[i] = Div(Class("column"), Div(
+			Class("cell"),
+			Card(movie.OriginalTitle, movie.PosterPath),
+		))
 	}
 
-	var cards [7]Node
-	for i, movie := range response.Results[PopularMoviesDisplayed:] {
-		if i >= len(cards) {
-			break
-		}
-		cards[i] = Div(Class("cell"), Card(movie.OriginalTitle, movie.PosterPath))
-	}
-	PopularMoviesDisplayed = PopularMoviesDisplayed + 7
-
-	return Div(Class("fixed-grid has-7-cols mx-4"),
-		P(Class("mt-6")),
-		Div(append([]Node{Class("grid is-column-gap-4.5")}, cards[:]...)...),
+	return Div(Class("category"),
+		Div(Class("control arrows"),
+			Button(Class("arrow-left"), Text("◀"), Attr("onclick", "scrollGridLeft()")),
+			Button(Class("arrow-right"), Text("▶"), Attr("onclick", "scrollGridRight()")),
+		),
+		Div(
+			append([]Node{Class("columns is-mobile"), Attr("style", "overflow-x: auto; flex-wrap: nowrap; margin: 0;")}, cards[:]...)...,
+		),
+		Script(Src("/static/js/scroll.js")),
 	)
 }
 
 func CardGrill() Node {
-	return CreateCardGrill()
+	var PopularList ApiResponse
+
+	err := json.Unmarshal([]byte(GetPopularMovies()), &PopularList)
+	if err != nil {
+		fmt.Println("Erreur lors du parsing JSON :", err)
+		return Div(Text("Erreur lors de la récupération des films."))
+	}
+	return CreateCardGrill(PopularList)
 }

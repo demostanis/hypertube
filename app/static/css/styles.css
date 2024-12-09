@@ -1,0 +1,50 @@
+.columns.is-mobile {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	padding: 1rem;
+}
+
+.columns.is-mobile::-webkit-scrollbar {
+	display: none;
+}
+
+.cell {
+	flex: 0 0 auto !important;
+	width: 250px !important;
+}
+
+.category {
+	position: relative;
+	overflow: hidden;
+}
+
+.control.arrows {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 5;
+}
+
+.arrow-left, .arrow-right {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background: rgba(0, 0, 0, 0.5);
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	pointer-events: auto;
+	transition: opacity 0.3s ease;
+}
+
+.arrow-left {
+	left: 10px;
+}
+
+.arrow-right {
+	right: 10px;
+}
