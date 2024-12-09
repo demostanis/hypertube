@@ -22,5 +22,5 @@ func PageWithTitle(title string, content ...Node) Node {
 }
 
 func Page(content ...Node) Node {
-	return PageWithTitle("Hypertube", content...)
+	return PageWithTitle("Crocotube", content...)
 }

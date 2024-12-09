@@ -32,7 +32,7 @@ kcadm() {
 kcadm create realms -s realm=default -s enabled=true
 # TODO: find the URL and pass it to the golang app
 kcadm create clients -r default \
-	-s clientId='hypertube-auth' \
+	-s clientId='crocotube-auth' \
 	-s 'redirectUris=["http://localhost:8000"]' \
 	-s publicClient=true \
 	-s directAccessGrantsEnabled=true 

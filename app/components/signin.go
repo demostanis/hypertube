@@ -8,7 +8,7 @@ import (
 func Signin() Node {
 	return Form(Method("Post"), Action("/signin"),
 		Center(
-			P(Class("title"), Text("Sign in to Hypertube")),
+			P(Class("title"), Text("Sign in to Crocotube")),
 			Input(Class("input"),
 				Placeholder("Username..."),
 				Name("username")),

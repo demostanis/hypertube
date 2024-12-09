@@ -18,7 +18,7 @@ func APILoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	paramsInto(&params, w, r)
 
-	token, err := auth("hypertube-auth", params.Username, params.Password, "default")
+	token, err := auth("crocotube-auth", params.Username, params.Password, "default")
 	if err != nil {
 		fmt.Printf("error: %s\n", err)
 		ghttp.Adapt(pages.LoginHandler)(w, r)

@@ -18,7 +18,7 @@ func Center(content ...Node) Node {
 func Login() Node {
 	return Form(Method("Post"), Action("/login"),
 		Center(
-			P(Class("title"), Text("Log in to Hypertube")),
+			P(Class("title"), Text("Log in to Crocotube")),
 			Input(Class("input"),
 				Placeholder("Username..."),
 				Name("username")),

@@ -8,7 +8,7 @@ import (
 func Foot() Node {
 	return Footer(Class("footer"),
 		Div(Class("content has-text-centered"),
-			Text("Hypertube by "),
+			Text("Crocotube by "),
 			A(Href("https://github.com/demostanis"), Text("demostanis")),
 			Text(" and "),
 			A(Href("https://github.com/DinoMalin"), Text("DinoMalin")),
