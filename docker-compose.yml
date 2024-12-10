@@ -12,12 +12,33 @@ services:
 
   caddy:
     image: caddy:2.9
+    depends_on:
+      keycloak:
+        condition: service_healthy
     ports:
       - "8000:80"
       - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_logs:/var/log/caddy
+
+  oauth2-proxy:
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.7.1
+    # extra_hosts:
+    #   - keycloak.localhost:8000=keycloak:8080 # Great idea but the ports doesn't work
+    command: |
+      --provider=keycloak-oidc
+      --client-id=forward-auth
+      --client-secret=dyT3lveHqktQMLeCB0hbEvk0QkX04DPT
+      --redirect-url=http://jackett.localhost:8000
+      --oidc-issuer-url=http://keycloak:8080/realms/master
+      --email-domain=* --code-challenge-method=S256
+      --cookie-secret=dinomalindinomal
+      --reverse-proxy=true
+      # client_secret can be set via client-secret-file which could be useful
 
   postgres:
     image: postgres:17.2
@@ -46,6 +67,11 @@ services:
     command: start
     depends_on:
       - postgres
+    healthcheck:
+      test: test -f /opt/keycloak/ready
+      interval: 1s
+      retries: 50
+      start_period: 10s
 
   redis:
     image: redis

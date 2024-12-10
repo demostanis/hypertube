@@ -1,5 +1,7 @@
 #!/bin/sh
 
+rm -f /opt/keycloak/ready
+
 bin/kc.sh "$@" &
 
 ok() {
@@ -29,6 +31,11 @@ kcadm() {
 	bin/kcadm.sh "$@" --config "$conf"
 }
 
+kcadm create clients -r master \
+	-s clientId='forward-auth' \
+	-s 'redirectUris=["http://jackett.localhost:8000"]' \
+	-s publicClient=false
+
 kcadm create realms -s realm=default -s enabled=true
 # TODO: find the URL and pass it to the golang app
 kcadm create clients -r default \
@@ -37,4 +44,6 @@ kcadm create clients -r default \
 	-s publicClient=true \
 	-s directAccessGrantsEnabled=true 
 
+touch /opt/keycloak/ready
 wait
+
