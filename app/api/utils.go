@@ -67,7 +67,7 @@ func auth(cid string, username string, password string, realm string) (string, e
 	form.Add("password", password)
 	form.Add("grant_type", "password")
 
-	link := "http://keycloak:8080/realms/" + realm + "/protocol/openid-connect/token"
+	link := "http://keycloak:8000/realms/" + realm + "/protocol/openid-connect/token"
 	res, err := http.PostForm(link, form)
 	if err != nil {
 		return "", fmt.Errorf("Error posting form: %w", err)

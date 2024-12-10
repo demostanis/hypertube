@@ -12,6 +12,9 @@ services:
 
   caddy:
     image: caddy:2.9
+    depends_on:
+      keycloak:
+        condition: service_healthy
     ports:
       - "8000:80"
       - "8443:443"
@@ -38,14 +41,44 @@ services:
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
 
-      KC_HOSTNAME: keycloak.localhost
+      # TODO: what about HTTPS?
+      KC_HTTP_PORT: 8000
+      KC_HOSTNAME: http://keycloak.localhost:8000
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
       KC_HTTP_ENABLED: true
 
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_FORWARD_AUTH_SECRET: ${KEYCLOAK_FORWARD_AUTH_SECRET}
     command: start
     depends_on:
       - postgres
+    healthcheck:
+      test: test -f /opt/keycloak/ready
+    networks:
+      default:
+        aliases:
+          - keycloak.localhost # for oauth2-proxy
+
+  forward-auth:
+    env_file: .env
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.7.1
+    command: |
+      --provider=keycloak-oidc
+      --client-id=forward-auth
+      --client-secret=$KEYCLOAK_FORWARD_AUTH_SECRET
+      --whitelist-domain=*.localhost:*
+      --oidc-issuer-url=http://keycloak.localhost:8000/realms/master
+      --email-domain=* --code-challenge-method=S256
+      --cookie-secure=false
+      --cookie-secret=dinomalindinomal
+      --http-address=0.0.0.0:4180
+      --reverse-proxy=true
+
+
 
   redis:
     image: redis

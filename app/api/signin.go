@@ -45,7 +45,7 @@ func createUser(params SigninParams, token string) error {
 	}
 
 	req, err := http.NewRequest("POST",
-		"http://keycloak:8080/admin/realms/default/users",
+		"http://keycloak:8000/admin/realms/default/users",
 		bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("Error creating request: %s", err.Error())
