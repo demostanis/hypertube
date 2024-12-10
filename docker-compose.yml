@@ -23,7 +23,7 @@ services:
     image: postgres:17.2
     env_file: .env
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
       - ./db/init.sh:/docker-entrypoint-initdb.d/init.sh
     environment:
       POSTGRES_USER: root
@@ -59,3 +59,6 @@ services:
 include:
   - ./metrics/docker-compose.yml
   - ./jackett/docker-compose.yml
+
+volumes:
+  pg_data:
