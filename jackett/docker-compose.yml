@@ -1,0 +1,14 @@
+services:
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    volumes:
+      - jackett_data:/config
+      - ./blackhole:/downloads
+      - ./setup_jackett.sh:/setup_jackett
+    command: /setup_jackett
+
+  flaresolverr:
+    image: flaresolverr/flaresolverr:v3.3.21
+
+volumes:
+  jackett_data:

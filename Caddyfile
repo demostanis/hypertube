@@ -23,3 +23,24 @@ keycloak.localhost:80 {
 smtp4dev.localhost:80 {
 	reverse_proxy smtp4dev:80
 }
+
+oauth2.localhost:80 {
+	reverse_proxy oauth2-proxy.internal:4180 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-Uri {uri}
+	}
+}
+
+jackett.localhost:80 {
+	forward_auth oauth2-proxy.internal:4180 {
+		uri oauth2.localhost:8000/auth
+		header_up X-Real-IP {remote_host}
+
+		@error status 401
+		handle_response @error {
+			# redirect to keycloak if fail idk where else yet
+			redir * keycloak.localhost:8000
+		}
+	}
+	reverse_proxy jackett:9117
+}
