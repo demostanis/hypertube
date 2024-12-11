@@ -1,6 +1,9 @@
 package components
 
 import (
+	"fmt"
+	"math/rand/v2"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/components"
 	. "maragu.dev/gomponents/html"
@@ -18,7 +21,7 @@ func PageWithTitle(title string, content ...Node) Node {
 			),
 			Link(
 				Rel("stylesheet"),
-				Href("/static/css/styles.css"),
+				Href(fmt.Sprintf("/static/css/styles.css?%d", rand.IntN(100))),
 			),
 			Script(Src("https://unpkg.com/htmx.org@1.9.10")),
 			Script(

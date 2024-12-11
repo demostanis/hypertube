@@ -13,7 +13,7 @@ func Home() Node {
 		components.Navbar(),
 		components.HeadLine("https://api.themoviedb.org/3/movie/top_rated?language=fr-FR&page=1"),
 		components.ContentCategory("https://api.themoviedb.org/3/movie/popular?language=fr-FR&page=1&region=fr-FR", "Popular Movies"),
-		components.ContentCategory("https://api.themoviedb.org/3/tv/popular?language=fr-FR&page=1&region=fr-FR", "Popular Series"),
+		components.ContentCategory("https://api.themoviedb.org/3/tv/top_rated?language=fr-FR&page=1", "Popular Series"),
 		Div(ID("content-popup")),
 		components.Foot())
 }

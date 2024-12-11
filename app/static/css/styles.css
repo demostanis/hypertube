@@ -17,10 +17,11 @@
 		.navbar-item.is-hoverable:focus .navbar-dropdown,
 		.navbar-item.is-hoverable:focus-within .navbar-dropdown,
 		.navbar-item.is-hoverable:hover .navbar-dropdown {
-		display: block;
+			display: block;
 		}
 
-		.navbar-start, .navbar-end {
+		.navbar-start,
+		.navbar-end {
 			justify-content: flex-end;
 			margin-left: auto;
 			align-items: stretch;
@@ -187,7 +188,8 @@
 	opacity: 0;
 }
 
-.arrow-left, .arrow-right {
+.arrow-left,
+.arrow-right {
 	position: absolute;
 	top: 12px;
 	color: white;
