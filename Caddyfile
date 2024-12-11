@@ -3,44 +3,49 @@
 		metrics
 	}
 	admin :2019
+
+	http_port 8000
 }
 
-localhost:80 {
+localhost:8000 {
 	reverse_proxy crocotube:8080
 	log {
 		output file /var/log/caddy/localhost.log
 	}
 }
 
-grafana.localhost:80 {
+grafana.localhost:8000 {
 	reverse_proxy grafana:3000
 }
 
-keycloak.localhost:80 {
-	reverse_proxy keycloak:8080
+keycloak.localhost:8000 {
+	reverse_proxy keycloak:8000
 }
 
-smtp4dev.localhost:80 {
+smtp4dev.localhost:8000 {
 	reverse_proxy smtp4dev:80
 }
 
-oauth2.localhost:80 {
-	reverse_proxy oauth2-proxy.internal:4180 {
-		header_up X-Real-IP {remote_host}
-		header_up X-Forwarded-Uri {uri}
-	}
-}
-
-jackett.localhost:80 {
-	forward_auth oauth2-proxy.internal:4180 {
-		uri oauth2.localhost:8000/auth
-		header_up X-Real-IP {remote_host}
-
-		@error status 401
-		handle_response @error {
-			# redirect to keycloak if fail idk where else yet
-			redir * keycloak.localhost:8000
+jackett.localhost:8000 {
+	handle /oauth2/* {
+		reverse_proxy oauth2-proxy:4180 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Uri {uri}
 		}
 	}
-	reverse_proxy jackett:9117
+
+	handle {
+		forward_auth oauth2-proxy:4180 {
+			uri /oauth2/auth
+
+			header_up X-Real-IP {remote_host}
+
+			@error status 401
+			handle_response @error {
+				redir * /oauth2/sign_in?rd={scheme}://{host}{uri}
+			}
+		}
+
+		reverse_proxy jackett:9117
+	}
 }

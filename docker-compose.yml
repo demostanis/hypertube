@@ -16,7 +16,7 @@ services:
       keycloak:
         condition: service_healthy
     ports:
-      - "8000:80"
+      - "8000:8000"
       - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
@@ -27,16 +27,16 @@ services:
       keycloak:
         condition: service_healthy
     image: quay.io/oauth2-proxy/oauth2-proxy:v7.7.1
-    # extra_hosts:
-    #   - keycloak.localhost:8000=keycloak:8080 # Great idea but the ports doesn't work
     command: |
       --provider=keycloak-oidc
       --client-id=forward-auth
-      --client-secret=dyT3lveHqktQMLeCB0hbEvk0QkX04DPT
-      --redirect-url=http://jackett.localhost:8000
-      --oidc-issuer-url=http://keycloak:8080/realms/master
+      --client-secret=K2PfmgDVw3SOde5Q0tjifZTtd50RJbbz
+      --redirect-url=http://jackett.localhost:8000/oauth2/callback
+      --whitelist-domain=*.localhost:*
+      --oidc-issuer-url=http://keycloak.localhost:8000/realms/master
       --email-domain=* --code-challenge-method=S256
       --cookie-secret=dinomalindinomal
+      --http-address=0.0.0.0:4180
       --reverse-proxy=true
       # client_secret can be set via client-secret-file which could be useful
 
@@ -59,7 +59,10 @@ services:
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
 
-      KC_HOSTNAME: keycloak.localhost
+      # TODO: what about HTTPS?
+      KC_HTTP_PORT: 8000
+      KC_HOSTNAME: http://keycloak.localhost:8000
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
       KC_HTTP_ENABLED: true
 
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
@@ -69,9 +72,10 @@ services:
       - postgres
     healthcheck:
       test: test -f /opt/keycloak/ready
-      interval: 1s
-      retries: 50
-      start_period: 10s
+    networks:
+      default:
+        aliases:
+          - keycloak.localhost # for oauth2-proxy
 
   redis:
     image: redis

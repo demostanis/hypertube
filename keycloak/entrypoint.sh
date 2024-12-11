@@ -5,7 +5,7 @@ rm -f /opt/keycloak/ready
 bin/kc.sh "$@" &
 
 ok() {
-	( exec 3<>/dev/tcp/localhost/8080
+	( exec 3<>/dev/tcp/localhost/8000
 	(
 	# imagine having your /health/ready brokenfajsdlfjk
 		echo GET /admin/master/console/ HTTP/1.1
@@ -22,7 +22,7 @@ done
 conf=$(mktemp)
 bin/kcadm.sh config credentials \
 	--config "$conf" \
-	--server http://localhost:8080 \
+	--server http://localhost:8000 \
 	--realm master \
 	--user "$KC_BOOTSTRAP_ADMIN_USERNAME" \
 	--password "$KC_BOOTSTRAP_ADMIN_PASSWORD" 
@@ -33,7 +33,7 @@ kcadm() {
 
 kcadm create clients -r master \
 	-s clientId='forward-auth' \
-	-s 'redirectUris=["http://jackett.localhost:8000"]' \
+	-s 'redirectUris=["http://jackett.localhost:8000/oauth2/callback"]' \
 	-s publicClient=false
 
 kcadm create realms -s realm=default -s enabled=true
@@ -44,6 +44,12 @@ kcadm create clients -r default \
 	-s publicClient=true \
 	-s directAccessGrantsEnabled=true 
 
-touch /opt/keycloak/ready
-wait
+kcadm create components -r master \
+	-s name=aud-mapper-forward-auth \
+	-s included.client.audience=forward-auth \
+	... # something probably, we need an audience for oauth2-proxy
+# good luck julian
 
+touch /opt/keycloak/ready
+
+wait
