@@ -2,3 +2,4 @@ data/
 jackett/blackhole
 conf.mk
 .env
+.compose-watch.pid
