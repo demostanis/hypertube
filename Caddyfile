@@ -16,74 +16,32 @@ keycloak.localhost:80 {
 	reverse_proxy keycloak:8000
 }
 
-smtp4dev.localhost:80 {
-	handle /oauth2/* {
-		reverse_proxy forward-auth:4180 {
-			header_up X-Real-IP {remote_host}
-			header_up X-Forwarded-Uri {uri}
-		}
-	}
-
-	handle {
-		forward_auth forward-auth:4180 {
-			uri /oauth2/auth
-
-			header_up X-Real-IP {remote_host}
-
-			@error status 401
-			handle_response @error {
-				redir * /oauth2/sign_in?rd={scheme}://{host}:{port}{uri}
+(auth) {
+	{args.0}.localhost:80 {
+		handle /oauth2/* {
+			reverse_proxy forward-auth:4180 {
+				header_up X-Real-IP {remote_host}
+				header_up X-Forwarded-Uri {uri}
 			}
 		}
 
-		reverse_proxy smtp4dev:80
-	}
-}
+		handle {
+			forward_auth forward-auth:4180 {
+				uri /oauth2/auth
 
-grafana.localhost:80 {
-	handle /oauth2/* {
-		reverse_proxy forward-auth:4180 {
-			header_up X-Real-IP {remote_host}
-			header_up X-Forwarded-Uri {uri}
-		}
-	}
+				header_up X-Real-IP {remote_host}
 
-	handle {
-		forward_auth forward-auth:4180 {
-			uri /oauth2/auth
-
-			header_up X-Real-IP {remote_host}
-
-			@error status 401
-			handle_response @error {
-				redir * /oauth2/sign_in?rd={scheme}://{host}:{port}{uri}
+				@error status 401
+				handle_response @error {
+					redir * /oauth2/sign_in?rd={scheme}://{host}:{port}{uri}
+				}
 			}
-		}
 
-		reverse_proxy grafana:3000
+			reverse_proxy {args.1}
+		}
 	}
 }
 
-jackett.localhost:80 {
-	handle /oauth2/* {
-		reverse_proxy forward-auth:4180 {
-			header_up X-Real-IP {remote_host}
-			header_up X-Forwarded-Uri {uri}
-		}
-	}
-
-	handle {
-		forward_auth forward-auth:4180 {
-			uri /oauth2/auth
-
-			header_up X-Real-IP {remote_host}
-
-			@error status 401
-			handle_response @error {
-				redir * /oauth2/sign_in?rd={scheme}://{host}:{port}{uri}
-			}
-		}
-
-		reverse_proxy jackett:9117
-	}
-}
+import auth smtp4dev smtp4dev:80
+import auth grafana grafana:3000
+import auth jackett jackett:9117
