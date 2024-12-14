@@ -3,6 +3,8 @@ COMPOSE = docker-compose
 
 -include conf.mk
 
+all: build watch
+
 build: secrets
 	$(COMPOSE) up --build -d
 
