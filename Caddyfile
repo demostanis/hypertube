@@ -17,7 +17,27 @@ keycloak.localhost:80 {
 }
 
 smtp4dev.localhost:80 {
-	reverse_proxy smtp4dev:80
+	handle /oauth2/* {
+		reverse_proxy forward-auth:4180 {
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-Uri {uri}
+		}
+	}
+
+	handle {
+		forward_auth forward-auth:4180 {
+			uri /oauth2/auth
+
+			header_up X-Real-IP {remote_host}
+
+			@error status 401
+			handle_response @error {
+				redir * /oauth2/sign_in?rd={scheme}://{host}:{port}{uri}
+			}
+		}
+
+		reverse_proxy smtp4dev:80
+	}
 }
 
 grafana.localhost:80 {
