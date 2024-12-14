@@ -41,7 +41,7 @@ kcadm create clients -r default \
 
 FORWARD_AUTH_ID=$(kcadm create clients -r master \
 	-s clientId='forward-auth' \
-	-s 'redirectUris=["http://jackett.localhost:8000/oauth2/callback"]' \
+	-s 'redirectUris=["http://jackett.localhost:8000/oauth2/callback", "http://grafana.localhost:8000/oauth2/callback"]' \
 	-s publicClient=false \
 	-s "secret=$KC_FORWARD_AUTH_SECRET" --id)
 
