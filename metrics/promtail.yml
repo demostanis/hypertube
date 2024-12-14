@@ -9,3 +9,11 @@ scrape_configs:
         labels:
           job: caddy_logs
           __path__: /var/log/caddy/*
+
+  - job_name: worker_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: worker_logs
+          __path__: /var/log/worker/worker.log
