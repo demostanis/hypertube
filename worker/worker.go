@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"maps"
 	"os"
+	"strconv"
+	"sync"
 
 	tmdb "github.com/cyruzin/golang-tmdb"
 	"github.com/webtor-io/go-jackett"
@@ -17,10 +20,15 @@ const (
 	jackettURL        = "http://jackett:9117"
 )
 
+var defaultParams = map[string]string{
+	"language": "fr-FR",
+}
+
 type TMDBClient struct {
-	c   *tmdb.Client
-	j   *jackett.Jackett
-	log *slog.Logger
+	c    *tmdb.Client
+	j    *jackett.Jackett
+	log  *slog.Logger
+	page int
 }
 
 func newTMDBClient(j *jackett.Jackett, logger *slog.Logger) (*TMDBClient, error) {
@@ -29,35 +37,55 @@ func newTMDBClient(j *jackett.Jackett, logger *slog.Logger) (*TMDBClient, error)
 		return nil, fmt.Errorf("failed to initialize TMDB client: %w", err)
 	}
 	client.SetClientAutoRetry()
-	return &TMDBClient{client, j, logger}, nil
+	return &TMDBClient{client, j, logger, 0}, nil
+}
+
+type Movie struct {
+	Title string
+}
+
+func (t *TMDBClient) Jackettize(movie Movie) {
+	t.log.Info("fetching movie", "movie", movie.Title)
+	res, err := t.j.Fetch(context.TODO(), &jackett.FetchRequest{
+		Query: movie.Title,
+	})
+	if err != nil {
+		t.log.Error("failed to fetch movie",
+			"movie", movie.Title,
+			"error", err)
+		return
+	}
+
+	if len(res.Results) == 0 {
+		t.log.Warn("no torrents available for movie",
+			"movie", movie.Title)
+		return
+	}
+
+	t.log.Info("found torrents",
+		"movie", movie.Title, "count", len(res.Results))
 }
 
 func (t *TMDBClient) Discover() error {
-	movies, err := t.c.GetDiscoverMovie(nil)
+	t.page += 1
+	params := maps.Clone(defaultParams)
+	params["page"] = strconv.Itoa(t.page)
+
+	movies, err := t.c.GetDiscoverMovie(params)
 	if err != nil {
 		return fmt.Errorf("failed to discover movies using TMDB: %w", err)
 	}
+
+	var wg sync.WaitGroup
 	for _, movie := range movies.Results {
-		t.log.Info("fetching movie", "movie", movie.Title)
-		res, err := t.j.Fetch(context.TODO(), &jackett.FetchRequest{
-			Query: movie.Title,
-		})
-		if err != nil {
-			t.log.Error("failed to fetch movie",
-				"movie", movie.Title,
-				"error", err)
-			continue
-		}
-
-		if len(res.Results) == 0 {
-			t.log.Warn("no torrents available for movie",
-				"movie", movie.Title)
-			continue
-		}
-
-		t.log.Info("found torrents",
-			"movie", movie.Title, "count", len(res.Results))
+		wg.Add(1)
+		go func() {
+			t.Jackettize(Movie{movie.Title})
+			wg.Done()
+		}()
 	}
+	wg.Wait()
+
 	return nil
 }
 
@@ -97,9 +125,12 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	err = tmdbClient.Discover()
-	if err != nil {
-		return err
+
+	for {
+		err = tmdbClient.Discover()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
