@@ -76,9 +76,8 @@ services:
       --cookie-secure=false
       --cookie-secret=dinomalindinomal
       --http-address=0.0.0.0:4180
+      --skip-provider-button
       --reverse-proxy=true
-
-
 
   redis:
     image: redis
