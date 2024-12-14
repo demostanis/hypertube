@@ -15,3 +15,9 @@ pwgen KEYCLOAK_DB_PASSWORD
 pwgen ROOT_DB_PASSWORD
 pwgen KEYCLOAK_FORWARD_AUTH_SECRET
 pwgen FORWARD_AUTH_COOKIE_SECRET
+
+if ! grep -q TMDB_API_KEY "$env_file"; then
+	echo missing TMDB_API_KEY >&2
+	echo please generate one at https://www.themoviedb.org/settings/api >&2
+	exit 1
+fi
