@@ -36,6 +36,7 @@ services:
     image: grafana/promtail:3.2.2
     volumes:
       - caddy_logs:/var/log/caddy
+      - worker_logs:/var/log/worker
       - ./promtail.yml:/etc/promtail/config.yml
     networks:
       - metrics
@@ -62,3 +63,4 @@ networks:
 
 volumes:
   caddy_logs:
+  worker_logs:
