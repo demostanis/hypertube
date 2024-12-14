@@ -2,13 +2,27 @@ services:
   crocotube:
     build: app
     env_file: .env
-    environment:
-      MOVIE_DB_API: ${MOVIE_DB_API}
     develop:
       watch:
         - action: rebuild
           path: app
           target: /app/
+
+  worker:
+    build: worker
+    env_file: .env
+    environment:
+      TMDB_API_KEY: ${TMDB_API_KEY}
+    volumes:
+      - jackett_data:/app/jackett/
+    develop:
+      watch:
+        - action: rebuild
+          path: worker
+          target: /app/
+    depends_on:
+      jackett:
+        condition: service_healthy
 
   caddy:
     image: caddy:2.9
