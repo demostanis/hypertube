@@ -6,6 +6,8 @@ services:
       - ./blackhole:/downloads
       - ./setup_jackett.sh:/setup_jackett
     command: /setup_jackett
+    healthcheck:
+      test: curl -f localhost:9117
 
   flaresolverr:
     image: flaresolverr/flaresolverr:v3.3.21

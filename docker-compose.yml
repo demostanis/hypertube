@@ -22,6 +22,7 @@ services:
       TMDB_API_KEY: ${TMDB_API_KEY}
     volumes:
       - jackett_data:/app/jackett/
+      - worker_logs:/var/log/worker
     develop:
       watch:
         - action: rebuild
