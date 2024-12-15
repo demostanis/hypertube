@@ -80,7 +80,7 @@ services:
       --oidc-issuer-url=http://keycloak.localhost:8000/realms/master
       --email-domain=* --code-challenge-method=S256
       --cookie-secure=false
-      --cookie-secret=dinomalindinomal
+      --cookie-secret=$FORWARD_AUTH_COOKIE_SECRET
       --http-address=0.0.0.0:4180
       --skip-provider-button
       --reverse-proxy=true
