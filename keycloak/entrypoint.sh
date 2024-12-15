@@ -45,13 +45,11 @@ FORWARD_AUTH_ID=$(kcadm create clients -r master \
 	-s publicClient=false \
 	-s "secret=$KC_FORWARD_AUTH_SECRET" --id)
 
-
-ADMIN_ID=$(kcadm get users -r master -q exact=true -q username=$KEYCLOAK_ADMIN | grep id | sed -e 's/"id" : "//' -e 's/",//' | xargs)
+ADMIN_ID=$(kcadm get users -r master -q exact=true -q username=$KC_BOOTSTRAP_ADMIN_USERNAME | grep id | sed -e 's/"id" : "//' -e 's/",//' | xargs)
 
 kcadm update "users/$ADMIN_ID" \
 	-s emailVerified=true \
-	-s email=$KEYCLOAK_ADMIN_EMAIL
-
+	-s email=$KC_ADMIN_EMAIL
 
 if [ -n "$FORWARD_AUTH_ID" ]; then
 	kcadm create "clients/$FORWARD_AUTH_ID/protocol-mappers/models" -r master \

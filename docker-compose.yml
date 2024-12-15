@@ -51,7 +51,10 @@ services:
 
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_FORWARD_AUTH_SECRET: ${KEYCLOAK_FORWARD_AUTH_SECRET}
+
+      # only used in entrypoint.sh
+      KC_FORWARD_AUTH_SECRET: ${KEYCLOAK_FORWARD_AUTH_SECRET} 
+      KC_ADMIN_EMAIL: ${KEYCLOAK_ADMIN_EMAIL}
     command: start
     depends_on:
       postgres:
