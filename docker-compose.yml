@@ -31,6 +31,8 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: ${ROOT_DB_PASSWORD}
+    healthcheck:
+      test: pg_isready --dbname=crocotube
 
   keycloak:
     build: keycloak
@@ -52,7 +54,8 @@ services:
       KC_FORWARD_AUTH_SECRET: ${KEYCLOAK_FORWARD_AUTH_SECRET}
     command: start
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: test -f /opt/keycloak/ready
     networks:
