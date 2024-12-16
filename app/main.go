@@ -9,9 +9,17 @@ import (
 	"github.com/demostanis/hypertube/api"
 	"github.com/demostanis/hypertube/pages"
 	"github.com/gorilla/pat"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	ghttp "maragu.dev/gomponents/http"
 )
+
+func connectToDatabase() (*gorm.DB, error) {
+	pass := os.Getenv("HYPERTUBE_DB_PASSWORD")
+	dsn := fmt.Sprintf("host=postgres user=crocotube password=%s dbname=crocotube port=5432", pass)
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+}
 
 func main() {
 	fs := http.FileServer(http.Dir("static"))
@@ -32,6 +40,14 @@ func main() {
 	if !ok {
 		port = "8080"
 	}
+
+	db, err := connectToDatabase()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "failed to connect db:", err)
+		return
+	}
+	fmt.Println("Connected to db:", db)
+
 	fmt.Println("serving at http://0.0.0.0:" + port)
 	http.ListenAndServe(":"+port, nil)
 }
