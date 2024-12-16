@@ -2,12 +2,15 @@ module github.com/demostanis/hypertube
 
 go 1.23.1
 
+replace github.com/demostanis/hypertube/models => ./models
+
 require (
 	github.com/gorilla/pat v1.0.2
 	github.com/gorilla/schema v1.4.1
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gorm v1.25.12
 	maragu.dev/gomponents v1.0.0
+	github.com/demostanis/hypertube/models v1.0.0
 )
 
 require (
