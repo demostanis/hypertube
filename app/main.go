@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/demostanis/hypertube/api"
+	"github.com/demostanis/hypertube/models"
 	"github.com/demostanis/hypertube/pages"
 	"github.com/gorilla/pat"
 	"gorm.io/driver/postgres"
@@ -47,6 +48,9 @@ func main() {
 		return
 	}
 	fmt.Println("Connected to db:", db)
+
+	test := models.Content{ID: 1, Name: "The Great DinoMalin"}
+	fmt.Println(test.Name)
 
 	fmt.Println("serving at http://0.0.0.0:" + port)
 	http.ListenAndServe(":"+port, nil)
