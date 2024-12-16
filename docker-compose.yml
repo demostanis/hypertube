@@ -38,7 +38,7 @@ services:
       - caddy_logs:/var/log/caddy
 
   postgres:
-    image: postgres:17.2
+    build: db
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
@@ -48,6 +48,7 @@ services:
       POSTGRES_PASSWORD: ${ROOT_DB_PASSWORD}
     healthcheck:
       test: pg_isready --dbname=crocotube
+    command: -c config_file=/usr/share/postgresql/postgresql.conf.sample
 
   keycloak:
     build: keycloak
@@ -100,11 +101,29 @@ services:
       --skip-provider-button
       --reverse-proxy=true
 
-  redis:
-    image: redis
-
   meilisearch:
     image: getmeili/meilisearch
+    env_file: .env
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+    volumes:
+      - meili_data:/meili_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  meilisync:
+    image: long2ice/meilisync
+    volumes:
+      - ./db/meilisync_config.yml:/meilisync/config.yml.template
+      - ./db/meilisync_entrypoint.sh:/entrypoint.sh
+    env_file: .env
+    environment:
+      MEILISEARCH_DB_PASSWORD: ${MEILISEARCH_DB_PASSWORD}
+    depends_on:
+      - meilisearch
+      - postgres
+    entrypoint: /entrypoint.sh
 
   smtp4dev:
     image: rnwood/smtp4dev
@@ -115,3 +134,4 @@ include:
 
 volumes:
   pg_data:
+  meili_data:
