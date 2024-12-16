@@ -2,8 +2,6 @@
 
 rm -f /opt/keycloak/ready
 
-bin/kc.sh "$@" &
-
 ok() {
 	( exec 3<>/dev/tcp/localhost/8000
 	(
@@ -15,9 +13,23 @@ ok() {
 	head -n1 <&3 | grep -q 200 )
 }
 
-while ! ok 2>/dev/null; do
-	sleep 1
-done
+wait_ok() {
+	while ! ok 2>/dev/null; do
+		sleep 1
+	done
+}
+
+if [ -e /opt/keycloak/did-initial-configuration ]; then
+	echo Starting optimized Keycloak...
+	bin/kc.sh "$@" --optimized &
+	wait_ok
+	touch /opt/keycloak/ready
+	wait
+fi
+
+bin/kc.sh "$@" &
+
+wait_ok
 
 conf=$(mktemp)
 bin/kcadm.sh config credentials \
@@ -62,5 +74,6 @@ if [ -n "$FORWARD_AUTH_ID" ]; then
 fi
 
 touch /opt/keycloak/ready
+touch /opt/keycloak/did-initial-configuration
 
 wait
