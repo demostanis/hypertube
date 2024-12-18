@@ -16,11 +16,14 @@ type LoginParams struct {
 func APILoginHandler(w http.ResponseWriter, r *http.Request) {
 	var params LoginParams
 
-	paramsInto(&params, w, r)
+	err := paramsInto(&params, w, r)
+	if err != nil {
+		return
+	}
 
 	token, err := auth("crocotube-auth", params.Username, params.Password, "default")
 	if err != nil {
-		apiError(w, r, pages.Login, err.Error())
+		_, _ = apiError(w, r, pages.Login, err.Error())
 		return
 	}
 

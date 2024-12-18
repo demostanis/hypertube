@@ -49,5 +49,8 @@ func main() {
 	fmt.Println(test.Name)
 
 	fmt.Println("serving at http://0.0.0.0:" + port)
-	http.ListenAndServe(":"+port, nil)
+	err = http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "failed to serve:", err)
+	}
 }

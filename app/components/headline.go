@@ -52,7 +52,10 @@ func HeadlineMobile(Content mvdb.Content, Name string) Node {
 func HeadLine(Request string) Node {
 	var ContentList mvdb.ApiResponse
 
-	json.Unmarshal(mvdb.CallMvdbDefault(Request), &ContentList)
+	err := json.Unmarshal(mvdb.CallMvdbDefault(Request), &ContentList)
+	if err != nil {
+		return nil
+	}
 
 	Name := ContentList.Results[0].Title
 	if Name == "" {

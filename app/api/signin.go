@@ -81,7 +81,10 @@ func createUser(params SigninParams, token string) error {
 func APISigninHandler(w http.ResponseWriter, r *http.Request) {
 	var params SigninParams
 
-	paramsInto(&params, w, r)
+	err := paramsInto(&params, w, r)
+	if err != nil {
+		return
+	}
 
 	token, err := adminAuthorization()
 	if err != nil {
@@ -90,13 +93,13 @@ func APISigninHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if params.Password != params.PasswordCheck {
-		apiError(w, r, pages.Signin, "Password doesn't match")
+		_, _ = apiError(w, r, pages.Signin, "Password doesn't match")
 		return
 	}
 
 	err = createUser(params, token)
 	if err != nil {
-		apiError(w, r, pages.Signin, err.Error())
+		_, _ = apiError(w, r, pages.Signin, err.Error())
 		return
 	}
 
