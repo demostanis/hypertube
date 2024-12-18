@@ -151,7 +151,10 @@ func CreateCategory(ContentList mvdb.ApiResponse, Name string) Node {
 func ContentCategory(Request, CategoryName string) Node {
 	var ContentList mvdb.ApiResponse
 
-	json.Unmarshal(mvdb.CallMvdbDefault(Request), &ContentList)
+	err := json.Unmarshal(mvdb.CallMvdbDefault(Request), &ContentList)
+	if err != nil {
+		return nil
+	}
 
 	Category := CreateCategory(ContentList, CategoryName)
 

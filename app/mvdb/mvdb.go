@@ -58,7 +58,10 @@ func SearchTrailer(ContentID, Lang string) string {
 
 	response := CallMvdbDefault("https://api.themoviedb.org/3/movie/" + ContentID + "/videos" + Lang)
 
-	json.Unmarshal(response, &Trailers)
+	err := json.Unmarshal(response, &Trailers)
+	if err != nil {
+		return ""
+	}
 
 	for _, Trailer := range Trailers.Results {
 		if Trailer.TrailerOfficial &&

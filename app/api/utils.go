@@ -17,7 +17,7 @@ var decoder = schema.NewDecoder()
 
 func bad(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusBadRequest)
-	w.Write([]byte("bad request"))
+	_, _ = w.Write([]byte("bad request"))
 }
 
 type Handler = func(string) Node
