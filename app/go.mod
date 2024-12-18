@@ -5,12 +5,10 @@ go 1.23.1
 replace github.com/demostanis/hypertube/models => ./models
 
 require (
+	github.com/demostanis/hypertube/models v1.0.0
 	github.com/gorilla/pat v1.0.2
 	github.com/gorilla/schema v1.4.1
-	gorm.io/driver/postgres v1.5.11
-	gorm.io/gorm v1.25.12
 	maragu.dev/gomponents v1.0.0
-	github.com/demostanis/hypertube/models v1.0.0
 )
 
 require (
@@ -25,4 +23,6 @@ require (
 	golang.org/x/crypto v0.17.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	gorm.io/driver/postgres v1.5.11 // indirect
+	gorm.io/gorm v1.25.12 // indirect
 )
