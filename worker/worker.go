@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	tmdb "github.com/cyruzin/golang-tmdb"
+	"github.com/demostanis/hypertube/models"
 	"github.com/webtor-io/go-jackett"
 )
 
@@ -137,7 +138,18 @@ func run() error {
 }
 
 func main() {
-	err := run()
+	db, err := models.ConnectToDatabase(
+		"crocotube",
+		"crocotube",
+		os.Getenv("HYPERTUBE_DB_PASSWORD"),
+	)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "failed to connect db:", err)
+		return
+	}
+	fmt.Println("Connected to db:", db)
+
+	err = run()
 	if err != nil {
 		fmt.Fprintln(os.Stdout, err)
 		os.Exit(1)
