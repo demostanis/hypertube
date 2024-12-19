@@ -16,7 +16,9 @@ services:
           target: /app/
 
   worker:
-    build: worker
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
     env_file: .env
     environment:
       TMDB_API_KEY: ${TMDB_API_KEY}
