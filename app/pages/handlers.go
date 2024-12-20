@@ -31,6 +31,16 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
 	return Home(), nil
 }
 
+func ContentHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
+	contentType := r.URL.Query().Get(":type")
+
+	if contentType != "movie" && contentType != "tv" {
+		return Home(), nil
+	}
+
+	return ContentPage(contentType, r.URL.Query().Get(":query")), nil
+}
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) (Node, error) {
 	return Login(""), nil
 }

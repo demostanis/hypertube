@@ -25,6 +25,7 @@ func main() {
 	r.Post("/login", api.APILoginHandler)
 	r.Get("/signin", ghttp.Adapt(pages.SigninHandler))
 	r.Post("/signin", api.APISigninHandler)
+	r.Get("/content/{type}/{query}", ghttp.Adapt(pages.ContentHandler))
 	r.Get("/", ghttp.Adapt(pages.HomeHandler))
 
 	http.Handle("/", r)
