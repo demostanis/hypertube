@@ -95,16 +95,8 @@ func CreateCards(ContentList mvdb.ApiResponse, categoryId string) []Node {
 				Attr("hx-trigger", "click"),
 				Attr("hx-target", "#content-popup"),
 				Attr("hx-swap", "innerHTML"),
-				Attr(
-					"hx-vals",
-					fmt.Sprintf(
-						`{"Id": %d, "title": "%s", "overview": "%s", "image": "%s"}`,
-						Content.Id,
-						Title,
-						Content.Overview,
-						Content.ImagePath,
-					),
-				),
+				Attr("hx-vals", fmt.Sprintf(`{"Id": %d, "isMovie": "%t"}`,
+					Content.Id, (Content.Title != ""))),
 				Card(Content.PosterPath),
 			),
 		)
@@ -140,7 +132,7 @@ func CreateCategory(ContentList mvdb.ApiResponse, Name string) Node {
 	return Div(
 		Class("category"),
 		Div(
-			Class("category-title title is-2 ml-5 mt-3"),
+			Class("category-title title is-2 ml-5 mt-3 mb-1"),
 			Attr("style", "position: relative;"),
 			Text(Name),
 		),

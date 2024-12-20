@@ -53,28 +53,53 @@ func CallMvdbDefault(link string) []byte {
 	return []byte(body)
 }
 
-func SearchTrailer(ContentID, Lang string) string {
-	var Trailers ApiResponse
+func searchTrailer(contentId, lang string, isMovie bool) string {
+	var trailers ApiResponse
+	var response []byte
 
-	response := CallMvdbDefault("https://api.themoviedb.org/3/movie/" + ContentID + "/videos" + Lang)
+	if isMovie {
+		response = CallMvdbDefault("https://api.themoviedb.org/3/movie/" + contentId + "/videos" + lang)
+	} else {
+		response = CallMvdbDefault("https://api.themoviedb.org/3/tv/" + contentId + "/videos" + lang)
+	}
 
-	json.Unmarshal(response, &Trailers)
+	json.Unmarshal(response, &trailers)
 
-	for _, Trailer := range Trailers.Results {
-		if Trailer.TrailerOfficial &&
-			Trailer.TrailerSite == "YouTube" &&
-			Trailer.TrailerSize == 1080 &&
-			(Trailer.TrailerType == "Teaser" || Trailer.TrailerType == "Trailer") {
-			return "https://www.youtube.com/embed/" + Trailer.TrailerKey
+	for _, trailer := range trailers.Results {
+		if trailer.TrailerOfficial &&
+			trailer.TrailerSite == "YouTube" &&
+			trailer.TrailerSize == 1080 &&
+			(trailer.TrailerType == "Teaser" || trailer.TrailerType == "Trailer") {
+			return "https://www.youtube.com/embed/" + trailer.TrailerKey
 		}
 	}
 	return ""
 }
 
-func FindTrailer(ContentID string) string {
-	TrailerLink := SearchTrailer(ContentID, "?language=fr-FR")
-	if TrailerLink == "" {
-		return SearchTrailer(ContentID, "")
+func GetTrailer(contentId string, isMovie bool) string {
+	trailerLink := searchTrailer(contentId, "?language=fr-FR", isMovie)
+	if trailerLink == "" {
+		return searchTrailer(contentId, "", isMovie)
 	}
-	return TrailerLink
+	return trailerLink
+}
+
+func GetContentByID(contentId, lang string, isMovie bool) Content {
+	var content Content
+	var response []byte
+
+	if isMovie {
+		response = CallMvdbDefault("https://api.themoviedb.org/3/movie/" + contentId + "?language=" + lang)
+	} else {
+		response = CallMvdbDefault("https://api.themoviedb.org/3/tv/" + contentId + "?language=" + lang)
+	}
+
+	json.Unmarshal(response, &content)
+	if isMovie {
+		content.Name = content.Title
+	} else {
+		content.Title = content.Name
+	}
+
+	return content
 }
