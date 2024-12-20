@@ -17,6 +17,11 @@ func TestInt(t *testing.T) {
 	if result.Val != 123 {
 		t.Errorf("failed to parse int")
 	}
+
+	_, err = libtoto.ParseBencode("inane")
+	if err == nil {
+		t.Errorf("invalid int not erroring")
+	}
 }
 
 func TestStr(t *testing.T) {
@@ -35,6 +40,11 @@ func TestStr(t *testing.T) {
 	if err != libtoto.BadLength {
 		t.Errorf("bad length not erroring")
 	}
+
+	_, err = libtoto.ParseBencode("5aaaa:")
+	if err == nil {
+		t.Errorf("bad length not erroring")
+	}
 }
 
 func TestMiscErrors(t *testing.T) {
@@ -51,5 +61,10 @@ func TestMiscErrors(t *testing.T) {
 	_, err = libtoto.ParseBencode("18")
 	if err != libtoto.MissingDelimiter {
 		t.Errorf("missing ':' token for a string not erroring")
+	}
+
+	_, err = libtoto.ParseBencode("i1")
+	if err != libtoto.MissingDelimiter {
+		t.Errorf("missing 'e' token for an int not erroring")
 	}
 }
