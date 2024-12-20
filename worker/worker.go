@@ -65,6 +65,8 @@ func (t *TMDBClient) Jackettize(movie Movie) {
 
 	t.log.Info("found torrents",
 		"movie", movie.Title, "count", len(res.Results))
+
+	// todo: put the movie in the db
 }
 
 func (t *TMDBClient) Discover() error {
