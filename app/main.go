@@ -18,6 +18,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/empty", pages.HandleEmpty)
 	http.HandleFunc("/show-content-popup", pages.HandleShowContentPopup)
+	http.HandleFunc("/switch-season", pages.HanldeSwitchSeason)
+	http.HandleFunc("/select-episode", pages.HandleSelectEpisode)
 
 	r := pat.New()
 

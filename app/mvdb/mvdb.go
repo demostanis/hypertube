@@ -8,13 +8,27 @@ import (
 	"os"
 )
 
+type Episode struct {
+	Name      string `json:"name"`
+	Overview  string `json:"overview"`
+	Thumbnail string `json:"still_path"`
+	Runtime   int    `json:"runtime"`
+}
+
+type Season struct {
+	Name         string `json:"name"`
+	EpisodeCount int    `json:"episode_count"`
+}
+
 type Content struct {
-	ImagePath  string `json:"backdrop_path"`
-	PosterPath string `json:"poster_path"`
-	Title      string `json:"title"`
-	Name       string `json:"name"`
-	Overview   string `json:"overview"`
-	Id         int    `json:"id"`
+	ImagePath  string    `json:"backdrop_path"`
+	PosterPath string    `json:"poster_path"`
+	Title      string    `json:"title"`
+	Name       string    `json:"name"`
+	Overview   string    `json:"overview"`
+	Seasons    []Season  `json:"seasons"`
+	Episodes   []Episode `json:"episodes"`
+	Id         int       `json:"id"`
 
 	TrailerType     string `json:"type"`
 	TrailerSite     string `json:"site"`
