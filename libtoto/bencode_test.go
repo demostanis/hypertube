@@ -1,6 +1,7 @@
 package libtoto_test
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/demostanis/hypertube/libtoto"
@@ -44,6 +45,41 @@ func TestStr(t *testing.T) {
 	_, err = libtoto.ParseBencode("5aaaa:")
 	if err == nil {
 		t.Errorf("bad length not erroring")
+	}
+}
+
+func TestList(t *testing.T) {
+	result, err := libtoto.ParseBencode("l1:ae")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Type != libtoto.List {
+		t.Errorf("failed to parse list")
+	}
+	if !slices.Equal(result.Val.([]any), []any{"a"}) {
+		t.Errorf("failed to parse list")
+	}
+
+	result, err = libtoto.ParseBencode("l1:a2:bbe")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Type != libtoto.List {
+		t.Errorf("failed to parse multi-element list")
+	}
+	if !slices.Equal(result.Val.([]any), []any{"a", "bb"}) {
+		t.Errorf("failed to parse multi-element list")
+	}
+
+	result, err = libtoto.ParseBencode("le")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Type != libtoto.List {
+		t.Errorf("failed to parse empty list")
+	}
+	if !slices.Equal(result.Val.([]any), []any{}) {
+		t.Errorf("failed to parse empty list")
 	}
 }
 
