@@ -23,5 +23,11 @@ func ConnectToDatabase(name string, user string, pass string) (*gorm.DB, error) 
 		pass,
 		name,
 	)
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	db.AutoMigrate(&Content{})
+	return db, nil
 }

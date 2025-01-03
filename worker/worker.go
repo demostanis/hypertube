@@ -14,6 +14,7 @@ import (
 	tmdb "github.com/cyruzin/golang-tmdb"
 	"github.com/demostanis/hypertube/models"
 	"github.com/webtor-io/go-jackett"
+	"gorm.io/gorm"
 )
 
 const (
@@ -30,6 +31,7 @@ type TMDBClient struct {
 	j    *jackett.Jackett
 	log  *slog.Logger
 	page int
+	db   *gorm.DB
 }
 
 func newTMDBClient(j *jackett.Jackett, logger *slog.Logger) (*TMDBClient, error) {
@@ -38,14 +40,18 @@ func newTMDBClient(j *jackett.Jackett, logger *slog.Logger) (*TMDBClient, error)
 		return nil, fmt.Errorf("failed to initialize TMDB client: %w", err)
 	}
 	client.SetClientAutoRetry()
-	return &TMDBClient{client, j, logger, 0}, nil
+	db, err := models.ConnectToDatabase(
+		"crocotube",
+		"crocotube",
+		os.Getenv("HYPERTUBE_DB_PASSWORD"),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize database: %w", err)
+	}
+	return &TMDBClient{client, j, logger, 0, db}, nil
 }
 
-type Movie struct {
-	Title string
-}
-
-func (t *TMDBClient) Jackettize(movie Movie) {
+func (t *TMDBClient) Jackettize(movie models.Content) {
 	t.log.Info("fetching movie", "movie", movie.Title)
 	res, err := t.j.Fetch(context.TODO(), &jackett.FetchRequest{
 		Query: movie.Title,
@@ -65,6 +71,13 @@ func (t *TMDBClient) Jackettize(movie Movie) {
 
 	t.log.Info("found torrents",
 		"movie", movie.Title, "count", len(res.Results))
+
+	entry := t.db.Create(&movie)
+	if entry.Error != nil {
+		t.log.Error("failed to insert movie",
+			"movie", movie.Title,
+			"error", entry.Error)
+	}
 }
 
 func (t *TMDBClient) Discover() error {
@@ -81,7 +94,13 @@ func (t *TMDBClient) Discover() error {
 	for _, movie := range movies.Results {
 		wg.Add(1)
 		go func() {
-			t.Jackettize(Movie{movie.Title})
+			t.Jackettize(models.Content{
+				BackdropPath: movie.BackdropPath,
+				PosterPath:   movie.PosterPath,
+				Title:        movie.Title,
+				Name:         "i dont fucking know what this field is supposed to be",
+				Overview:     movie.Overview,
+			})
 			wg.Done()
 		}()
 	}
@@ -138,18 +157,7 @@ func run() error {
 }
 
 func main() {
-	db, err := models.ConnectToDatabase(
-		"crocotube",
-		"crocotube",
-		os.Getenv("HYPERTUBE_DB_PASSWORD"),
-	)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "failed to connect db:", err)
-		return
-	}
-	fmt.Println("Connected to db:", db)
-
-	err = run()
+	err := run()
 	if err != nil {
 		fmt.Fprintln(os.Stdout, err)
 		os.Exit(1)
