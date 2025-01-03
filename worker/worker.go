@@ -72,6 +72,16 @@ func (t *TMDBClient) Jackettize(movie models.Content) {
 	t.log.Info("found torrents",
 		"movie", movie.Title, "count", len(res.Results))
 
+	torrents := []models.Torrent{}
+	for _, item := range res.Results {
+		torrent := models.Torrent{
+			Link:   item.Link,
+			Source: item.Tracker,
+		}
+		torrents = append(torrents, torrent)
+	}
+	movie.Torrents = torrents
+
 	entry := t.db.Create(&movie)
 	if entry.Error != nil {
 		t.log.Error("failed to insert movie",

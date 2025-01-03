@@ -14,6 +14,14 @@ type Content struct {
 	Title        string
 	Name         string
 	Overview     string
+	Torrents     []Torrent
+}
+
+type Torrent struct {
+	ID        uint
+	Link      string
+	Source    string
+	ContentID uint
 }
 
 func ConnectToDatabase(name string, user string, pass string) (*gorm.DB, error) {
@@ -28,6 +36,6 @@ func ConnectToDatabase(name string, user string, pass string) (*gorm.DB, error) 
 		return nil, err
 	}
 
-	db.AutoMigrate(&Content{})
+	db.AutoMigrate(&Content{}, &Torrent{})
 	return db, nil
 }
