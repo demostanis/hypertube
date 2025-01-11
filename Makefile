@@ -3,10 +3,13 @@ COMPOSE = docker-compose
 
 -include conf.mk
 
-all: build watch
+all: up watch
 
-build: secrets
-	$(COMPOSE) up --build -d
+up: secrets
+	$(COMPOSE) up -d
+
+build:
+	$(COMPOSE) build $(S)
 
 watch:
 	$(KILL_WATCH) 2>/dev/null || :
@@ -15,13 +18,16 @@ watch:
 logs:
 	$(COMPOSE) logs -f $(S)
 
+exec:
+	$(COMPOSE) exec $(S) bash || $(COMPOSE) exec $(S) sh
+
 secrets:
 	@./secrets.sh
 
 down:
 	$(COMPOSE) down
 
-re: down build watch
+re: down build up watch
 
 tidy:
 	$(GO) mod tidy
